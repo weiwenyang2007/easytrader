@@ -3,7 +3,7 @@ from datetime import datetime
 from threading import Thread
 
 from easytrader import exceptions
-from easytrader.follower import BaseFollower
+from easytrader.follower.follower import BaseFollower
 from easytrader.log import logger
 
 

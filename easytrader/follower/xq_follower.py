@@ -7,7 +7,7 @@ from datetime import datetime
 from numbers import Number
 from threading import Thread
 
-from easytrader.follower import BaseFollower
+from easytrader.follower.follower import BaseFollower
 from easytrader.log import logger
 from easytrader.utils.misc import parse_cookies_str
 

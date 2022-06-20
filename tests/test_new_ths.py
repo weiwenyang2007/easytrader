@@ -25,12 +25,22 @@ class TestTHS519ClientTrader(unittest.TestCase):
         cls._user.prepare(user=cls._ACCOUNT, password=cls._PASSWORD)
 
     def test_balance(self):
-        time.sleep(3)
+        time.sleep(2)
         result = self._user.balance
+        print("查看当前资金：")
+        print(result)
+
+    def test_position(self):
+        time.sleep(2)
+        result = self._user.position
+        print("查看当前仓位：")
         print(result)
 
     def test_buy(self):
-        pass
+        time.sleep(2)
+        result = self._user.buy('162411', price=0.05, amount=100)
+        print("尝试买入：")
+        print(result)
 
     # def test_today_entrusts(self):
     #     result = self._user.today_entrusts

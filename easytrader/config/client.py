@@ -16,6 +16,9 @@ def create(broker):
         return HTZQ
     if broker == "universal":
         return UNIVERSAL
+    if broker == "ths5.19":
+        return THS519
+
     raise NotImplementedError
 
 
@@ -194,3 +197,7 @@ class UNIVERSAL(CommonConfig):
     }
 
     AUTO_IPO_NUMBER = '可申购数量'
+
+
+class THS519(CommonConfig):
+    DEFAULT_EXE_PATH = r"c:\\software\\ths\\xiadan.exe"

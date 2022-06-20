@@ -27,6 +27,7 @@ class TestTHS519ClientTrader(unittest.TestCase):
     def test_balance(self):
         time.sleep(3)
         result = self._user.balance
+        print(result)
 
     # def test_today_entrusts(self):
     #     result = self._user.today_entrusts

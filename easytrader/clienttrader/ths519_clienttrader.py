@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from easytrader.clienttrader.clienttrader import ClientTrader
+from easytrader.clienttrader.clienttrader import  BaseLoginClientTrader
 
 
-class THS519ClientTrader(ClientTrader):
+class THS519ClientTrader(BaseLoginClientTrader):
     """
     同花顺v5.19.15.133的实现(xiadan.exe)
     和5.18的界面相比，发生了变化，需要重新子类化

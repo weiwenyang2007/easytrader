@@ -499,6 +499,7 @@ class ClientTrader(IClientTrader):
                 control_id=control_id, class_name="Edit"
             ).set_edit_text(text)
         else:
+            logger.debug("输入文本：%s", text)
             editor = self._main.child_window(control_id=control_id, class_name="Edit")
             editor.select()
             editor.type_keys(text)

@@ -4,7 +4,8 @@
 使用方式如下:
 
 ```python
-from easytrader import grid_strategies
+
+from easytrader.strategy import grid_strategies
 
 user.grid_strategy = grid_strategies.Xls
 ```
@@ -14,7 +15,8 @@ user.grid_strategy = grid_strategies.Xls
 当前的刷新数据方式是通过切换菜单栏实现，通用但是比较缓慢，可以选择通过点击工具栏的刷新按钮来刷新
 
 ```python
-from easytrader import refresh_strategies
+
+from easytrader.strategy import refresh_strategies
 
 # refresh_btn_index 指的是刷新按钮在工具栏的排序，默认为第四个，根据客户端实际情况调整
 user.refresh_strategy = refresh_strategies.Toolbar(refresh_btn_index=4)

@@ -8,16 +8,15 @@ import sys
 import time
 from typing import Type, Union
 
-import hashlib, binascii
-
 import easyutils
 from pywinauto import findwindows, timings
 
-from easytrader import grid_strategies, pop_dialog_handler, refresh_strategies
+from easytrader import pop_dialog_handler
+from easytrader.strategy import grid_strategies, refresh_strategies
 from easytrader.config import client
-from easytrader.grid_strategies import IGridStrategy
+from easytrader.strategy.grid_strategies import IGridStrategy
 from easytrader.log import logger
-from easytrader.refresh_strategies import IRefreshStrategy
+from easytrader.strategy.refresh_strategies import IRefreshStrategy
 from easytrader.utils.misc import file2dict
 from easytrader.utils.perf import perf_clock
 

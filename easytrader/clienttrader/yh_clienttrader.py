@@ -4,7 +4,8 @@ import tempfile
 
 import pywinauto
 
-from easytrader import clienttrader, grid_strategies
+from easytrader import clienttrader
+from easytrader.strategy import grid_strategies
 from easytrader.utils.captcha import recognize_verify_code
 
 

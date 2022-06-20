@@ -3,11 +3,14 @@
 import pywinauto
 import pywinauto.clipboard
 
-from easytrader import grid_strategies
-from . import clienttrader
+from easytrader.strategy import grid_strategies
+from easytrader import clienttrader
 
 
 class HTClientTrader(clienttrader.BaseLoginClientTrader):
+    """
+    海通
+    """
     grid_strategy = grid_strategies.Xls
 
     @property

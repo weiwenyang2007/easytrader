@@ -1,3 +1,20 @@
+# 魔改版
+
+```
+IClientTrader
+└── ClientTrader
+     ├── BaseLoginClientTrader
+     │    ├── GFClientTrader
+     │    ├── GJClientTrader 
+     │    ├── YHClientTrader
+     │    ├── HTZQClientTrader
+     │    ├── HTClientTrader
+     │    │         └── WKClientTrader
+     │    └── UniversalClientTrader
+     └── THS519ClientTrader <--- ***** 新增加的类
+
+```
+
 # easytrader
 
 [![Package](https://img.shields.io/pypi/v/easytrader.svg)](https://pypi.python.org/pypi/easytrader)
@@ -12,7 +29,6 @@
 * 支持通过 webserver 远程操作客户端
 * 支持命令行调用，方便其他语言适配
 * 基于 Python3.6, Win。注: Linux 仅支持雪球
-
 
 ### 微信群以及公众号
 

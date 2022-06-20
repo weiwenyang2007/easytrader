@@ -5,7 +5,7 @@ import time
 import unittest
 from unittest import mock
 
-from easytrader.xq_follower import XueQiuFollower
+from easytrader.follower.xq_follower import XueQiuFollower
 
 
 class TestXueQiuTrader(unittest.TestCase):

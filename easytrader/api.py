@@ -2,12 +2,10 @@
 import logging
 import sys
 
-import six
-
-from easytrader.joinquant_follower import JoinQuantFollower
+from easytrader.follower.joinquant_follower import JoinQuantFollower
+from easytrader.follower.ricequant_follower import RiceQuantFollower
+from easytrader.follower.xq_follower import XueQiuFollower
 from easytrader.log import logger
-from easytrader.ricequant_follower import RiceQuantFollower
-from easytrader.xq_follower import XueQiuFollower
 from easytrader.xqtrader import XueQiuTrader
 
 if sys.version_info <= (3, 5):
@@ -34,37 +32,37 @@ def use(broker, debug=False, **kwargs):
         return XueQiuTrader(**kwargs)
 
     if broker.lower() in ["yh_client", "银河客户端"]:
-        from .yh_clienttrader import YHClientTrader
+        from easytrader.clienttrader.yh_clienttrader import YHClientTrader
 
         return YHClientTrader()
 
     if broker.lower() in ["ht_client", "华泰客户端"]:
-        from .ht_clienttrader import HTClientTrader
+        from easytrader.clienttrader.ht_clienttrader import HTClientTrader
 
         return HTClientTrader()
 
     if broker.lower() in ["wk_client", "五矿客户端"]:
-        from easytrader.wk_clienttrader import WKClientTrader
+        from easytrader.clienttrader.wk_clienttrader import WKClientTrader
 
         return WKClientTrader()
 
     if broker.lower() in ["htzq_client", "海通证券客户端"]:
-        from easytrader.htzq_clienttrader import HTZQClientTrader
+        from easytrader.clienttrader.htzq_clienttrader import HTZQClientTrader
 
         return HTZQClientTrader()
 
     if broker.lower() in ["gj_client", "国金客户端"]:
-        from .gj_clienttrader import GJClientTrader
+        from easytrader.clienttrader.gj_clienttrader import GJClientTrader
 
         return GJClientTrader()
 
     if broker.lower() in ["gf_client", "广发客户端"]:
-        from .gf_clienttrader import GFClientTrader
+        from easytrader.clienttrader.gf_clienttrader import GFClientTrader
 
         return GFClientTrader()
 
     if broker.lower() in ["universal_client", "通用同花顺客户端"]:
-        from easytrader.universal_clienttrader import UniversalClientTrader
+        from easytrader.clienttrader.universal_clienttrader import UniversalClientTrader
 
         return UniversalClientTrader()
 
@@ -72,6 +70,10 @@ def use(broker, debug=False, **kwargs):
         from .clienttrader import ClientTrader
 
         return ClientTrader()
+
+    if broker.lower() in ["ths5.19", "同花顺客户端v5.19"]:
+        from easytrader.clienttrader.ths519_clienttrader import THS519ClientTrader
+        return THS519ClientTrader()
 
     raise NotImplementedError
 

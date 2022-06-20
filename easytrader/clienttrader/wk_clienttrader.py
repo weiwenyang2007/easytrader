@@ -1,31 +1,26 @@
 # -*- coding: utf-8 -*-
-
 import pywinauto
-import pywinauto.clipboard
 
-from easytrader import grid_strategies
-from . import clienttrader
+from easytrader.clienttrader.ht_clienttrader import HTClientTrader
 
 
-class HTZQClientTrader(clienttrader.BaseLoginClientTrader):
-    grid_strategy = grid_strategies.Xls
-
+class WKClientTrader(HTClientTrader):
     @property
     def broker_type(self):
-        return "htzq"
+        return "wk"
 
     def login(self, user, password, exe_path, comm_password=None, **kwargs):
         """
-        :param user: 用户名
-        :param password: 密码
-        :param exe_path: 客户端路径, 类似
-        :param comm_password:
-        :param kwargs:
-        :return:
-        """
+                :param user: 用户名
+                :param password: 密码
+                :param exe_path: 客户端路径, 类似
+                :param comm_password:
+                :param kwargs:
+                :return:
+                """
         self._editor_need_type_keys = False
         if comm_password is None:
-            raise ValueError("必须设置通讯密码")
+            raise ValueError("五矿必须设置通讯密码")
 
         try:
             self._app = pywinauto.Application().connect(
@@ -42,13 +37,14 @@ class HTZQClientTrader(clienttrader.BaseLoginClientTrader):
                     break
                 except RuntimeError:
                     pass
+
             self._app.top_window().Edit1.set_focus()
-            self._app.top_window().Edit1.type_keys(user)
-            self._app.top_window().Edit2.type_keys(password)
+            self._app.top_window().Edit1.set_edit_text(user)
+            self._app.top_window().Edit2.set_edit_text(password)
 
-            self._app.top_window().Edit3.type_keys(comm_password)
+            self._app.top_window().Edit3.set_edit_text(comm_password)
 
-            self._app.top_window().button0.click()
+            self._app.top_window().Button1.click()
 
             # detect login is success or not
             self._app.top_window().wait_not("exists", 100)
@@ -58,4 +54,3 @@ class HTZQClientTrader(clienttrader.BaseLoginClientTrader):
             )
         self._close_prompt_windows()
         self._main = self._app.window(title="网上股票交易系统5.0")
-

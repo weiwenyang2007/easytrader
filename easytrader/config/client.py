@@ -39,10 +39,13 @@ class CommonConfig:
 
     COMMON_GRID_CONTROL_ID = 1047
 
+    COMMON_GRID_CONTROL_ID_NEW = 1308 # 另外一种grid控件，显示了资金总体情况，这个是使用spy++捕获出来的
+
     COMMON_GRID_LEFT_MARGIN = 10
     COMMON_GRID_FIRST_ROW_HEIGHT = 30
     COMMON_GRID_ROW_HEIGHT = 16
 
+    BALANCE_MENU_PATH_NEW = ["查询[F4]", "资金股份"]
     BALANCE_MENU_PATH = ["查询[F4]", "资金股票"]
     POSITION_MENU_PATH = ["查询[F4]", "资金股票"]
     TODAY_ENTRUSTS_MENU_PATH = ["查询[F4]", "当日委托"]

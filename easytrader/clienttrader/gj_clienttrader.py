@@ -11,6 +11,10 @@ from easytrader.utils.captcha import recognize_verify_code
 
 
 class GJClientTrader(clienttrader.BaseLoginClientTrader):
+    """
+    国金客户端
+    """
+
     @property
     def broker_type(self):
         return "gj"

@@ -12,6 +12,10 @@ from easytrader.utils.captcha import recognize_verify_code
 
 
 class GFClientTrader(clienttrader.BaseLoginClientTrader):
+    """
+    银河证券
+    """
+
     @property
     def broker_type(self):
         return "gf"

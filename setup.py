@@ -89,13 +89,13 @@ return::
 
 setup(
     name="easytrader",
-    version="0.23.0",
+    version="1.0.0",
     description="A utility for China Stock Trade",
     long_description=long_desc,
-    author="shidenggui",
-    author_email="longlyshidenggui@gmail.com",
+    author="piginzoo",
+    author_email="piginzoo@gmail.com",
     license="BSD",
-    url="https://github.com/shidenggui/easytrader",
+    url="https://github.com/piginzoo/easytrader",
     keywords="China stock trade",
     cmdclass={
         'clean': CleanCommand,

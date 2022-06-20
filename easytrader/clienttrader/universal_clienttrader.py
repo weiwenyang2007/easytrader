@@ -4,7 +4,7 @@ import pywinauto
 import pywinauto.clipboard
 
 from easytrader.strategy import grid_strategies
-from easytrader import clienttrader
+from easytrader.clienttrader import clienttrader
 
 
 class UniversalClientTrader(clienttrader.BaseLoginClientTrader):

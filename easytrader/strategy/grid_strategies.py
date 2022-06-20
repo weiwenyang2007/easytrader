@@ -119,7 +119,7 @@ class Copy(BaseStrategy):
                         #     captcha_num
                         # )  # 模拟输入验证码
                         # https://github.com/shidenggui/easytrader/issues/452
-                        
+
                         editor = self._trader.app.top_window().child_window(control_id=0x964,class_name="Edit")
                         editor.select()
                         editor.type_keys(captcha_num)

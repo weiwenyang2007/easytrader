@@ -8,7 +8,7 @@ from easytrader.clienttrader import clienttrader
 
 
 class UniversalClientTrader(clienttrader.BaseLoginClientTrader):
-    grid_strategy = grid_strategies.Xls
+    grid_strategy = grid_strategies.Copy # Xls
 
     @property
     def broker_type(self):

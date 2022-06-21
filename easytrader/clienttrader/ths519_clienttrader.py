@@ -41,32 +41,37 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
         """
         try:
             # 尝试连接一下，难道一定要等触发异常？？？
+            logger.info("尝试连接到原有进程")
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=1
             )
-            logger.info("尝试登录")
+            logger.info("尝试连接到原有进程成功")
+
         # pylint: disable=broad-except
         except Exception:
+            logger.info("尝试连接到原有进程失败，重新启动软件：%s",exe_path)
             self._app = pywinauto.Application().start(exe_path)
 
             # wait login window ready
             while True:
                 try:
+                    logger.info("启动软件完成，查找登录窗口")
                     login_window = pywinauto.findwindows.find_window(class_name='#32770', found_index=1)
                     break
                 except RuntimeError:
                     pass
 
-            logger.info("输入：用户[%s]和密码[%s]",user,password[:2]+"*****")
+            logger.info("自动输入：用户[%s]、密码[%s]",user,password[:2]+"*****")
 
             self._app.window(handle=login_window).Edit1.type_keys(user)
             self._app.window(handle=login_window).Edit2.type_keys(password)
             edit3 = self._app.window(handle=login_window).window(control_id=0x3eb)
             while True:
                 try:
+                    logger.info("准备开始解析验证码")
                     code = self._handle_verify_code(handle=login_window)
                     edit3.type_keys(code)
-                    logger.debug("解析验证码：%s",code)
+                    logger.info("解析验证码解析成功，并输入：%s",code)
                     time.sleep(1)
                     self._app.window(handle=login_window)["确定(Y)"].click()
                     # detect login is success or not

@@ -88,7 +88,7 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             )
         self._main = self._app.window(title="网上股票交易系统5.0")
 
-    def _handle_verify_code(self):
+    def _handle_verify_code(self,login_window):
         control = self._app.window(handle=login_window).window(control_id=0x5db)
         control.click()
         time.sleep(0.2)

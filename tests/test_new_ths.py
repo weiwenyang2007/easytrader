@@ -13,17 +13,20 @@ import unittest
 
 sys.path.append(".")
 
+
 class TestTHS519ClientTrader(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
+    def setUp(self):
         import easytrader
         # input your test account and password
-        cls._ACCOUNT = os.environ.get("ACCOUNT")
-        cls._PASSWORD = os.environ.get("PASSWORD")
-        cls._user = easytrader.use("ths5.19")
-        print("准备登录:",cls._ACCOUNT,cls._PASSWORD)
-        cls._user.prepare(user=cls._ACCOUNT, password=cls._PASSWORD)
-        cls._user.enable_type_keys_for_editor()
+        self._ACCOUNT = os.environ.get("ACCOUNT")
+        self._PASSWORD = os.environ.get("PASSWORD")
+        self._user = easytrader.use("ths5.19")
+        print("准备登录:", self._ACCOUNT, self._PASSWORD)
+        self._user.prepare(user=self._ACCOUNT, password=self._PASSWORD)
+        self._user.enable_type_keys_for_editor()
+
+    def tearDown(self) -> None:
+        self._user.exit()
 
     def test_balance(self):
         time.sleep(2)
@@ -70,6 +73,7 @@ class TestTHS519ClientTrader(unittest.TestCase):
     # def test_auto_ipo(self):
     #     self._user.auto_ipo()
 
+
 """
 ACCOUNT= \
 PASSWORD= \
@@ -77,4 +81,3 @@ python -m unittest tests.test_new_ths.TestTHS519ClientTrader.test_balance
 """
 if __name__ == "__main__":
     unittest.main(verbosity=2)
-

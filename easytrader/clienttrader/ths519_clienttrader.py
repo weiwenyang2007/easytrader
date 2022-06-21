@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 import time
 import tempfile
 import pywinauto
@@ -6,7 +7,9 @@ from easytrader.utils.captcha import recognize_verify_code
 
 from easytrader.clienttrader import clienttrader
 from easytrader.strategy import grid_strategies
+import logging
 
+logger = logging.getLogger(__name__)
 
 class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
     """
@@ -41,6 +44,7 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=1
             )
+            logger.info("尝试登录")
         # pylint: disable=broad-except
         except Exception:
             self._app = pywinauto.Application().start(exe_path)
@@ -53,6 +57,7 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
                 except RuntimeError:
                     pass
 
+            logger.info("输入：用户[%s]和密码[%s]",user,password[:2]+"*****")
             self._app.top_window().Edit1.type_keys(user)
             self._app.top_window().Edit2.type_keys(password)
             edit3 = self._app.top_window().window(control_id=0x3eb)
@@ -60,6 +65,7 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
                 try:
                     code = self._handle_verify_code()
                     edit3.type_keys(code)
+                    logger.debug("解析验证码：%s",code)
                     time.sleep(1)
                     self._app.top_window()["确定(Y)"].click()
                     # detect login is success or not
@@ -75,6 +81,7 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
                 except Exception:
                     pass
 
+            logger.debug("再一次尝试启动软件...")
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=10
             )

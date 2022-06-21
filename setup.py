@@ -1,5 +1,5 @@
 # coding:utf8
-from setuptools import setup,Command
+from setuptools import setup,Command,find_packages
 import os
 class CleanCommand(Command):
     """Custom clean command to tidy up the project root."""
@@ -119,7 +119,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "License :: OSI Approved :: BSD License",
     ],
-    packages=["easytrader", "easytrader.config", "easytrader.utils"],
+    packages=find_packages(where=".", include=('easytrader.*'),exclude=('tests', 'tests.*')),
     package_data={
         "": ["*.jar", "*.json"],
         "config": ["config/*.json"],

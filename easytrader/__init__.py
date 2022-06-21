@@ -2,8 +2,7 @@
 import urllib3
 
 from easytrader import exceptions
-# from easytrader.api import use, follower
-# from easytrader.api import use
+from easytrader.api import use, follower
 from easytrader.log import logger
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

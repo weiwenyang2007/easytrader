@@ -62,8 +62,10 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
                     pass
 
             logger.info("自动输入：用户[%s]、密码[%s]",user,password[:2]+"*****")
-
+            print(self._app.window(handle=login_window).Edit1)
+            self._app.window(handle=login_window).Edit1.set_focus()
             self._app.window(handle=login_window).Edit1.type_keys(user)
+            self._app.window(handle=login_window).Edit2.set_focus()
             self._app.window(handle=login_window).Edit2.type_keys(password)
             edit3 = self._app.window(handle=login_window).window(control_id=0x3eb)
             while True:

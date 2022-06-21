@@ -15,6 +15,8 @@ sys.path.append(".")
 
 
 class TestTHS519ClientTrader(unittest.TestCase):
+
+    @classmethod
     def setUpClass(cls) -> None:
         import easytrader
         # input your test account and password
@@ -25,6 +27,7 @@ class TestTHS519ClientTrader(unittest.TestCase):
         cls._user.prepare(user=cls._ACCOUNT, password=cls._PASSWORD)
         cls._user.enable_type_keys_for_editor()
 
+    @classmethod
     def tearDownClass(cls) -> None:
         cls._user.exit()
 

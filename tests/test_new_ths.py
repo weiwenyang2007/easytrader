@@ -15,18 +15,18 @@ sys.path.append(".")
 
 
 class TestTHS519ClientTrader(unittest.TestCase):
-    def setUp(self):
+    def setUpClass(cls) -> None:
         import easytrader
         # input your test account and password
-        self._ACCOUNT = os.environ.get("ACCOUNT")
-        self._PASSWORD = os.environ.get("PASSWORD")
-        self._user = easytrader.use("ths5.19")
-        print("准备登录:", self._ACCOUNT, self._PASSWORD)
-        self._user.prepare(user=self._ACCOUNT, password=self._PASSWORD)
-        self._user.enable_type_keys_for_editor()
+        cls._ACCOUNT = os.environ.get("ACCOUNT")
+        cls._PASSWORD = os.environ.get("PASSWORD")
+        cls._user = easytrader.use("ths5.19")
+        print("准备登录:", cls._ACCOUNT, cls._PASSWORD)
+        cls._user.prepare(user=cls._ACCOUNT, password=cls._PASSWORD)
+        cls._user.enable_type_keys_for_editor()
 
-    def tearDown(self) -> None:
-        self._user.exit()
+    def tearDownClass(cls) -> None:
+        cls._user.exit()
 
     def test_balance(self):
         time.sleep(2)

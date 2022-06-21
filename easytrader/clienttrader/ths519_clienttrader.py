@@ -52,30 +52,31 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             # wait login window ready
             while True:
                 try:
-                    self._app.top_window().Edit1.wait("ready")
+                    login_window = pywinauto.findwindows.find_window(class_name='#32770', found_index=1)
                     break
                 except RuntimeError:
                     pass
 
             logger.info("输入：用户[%s]和密码[%s]",user,password[:2]+"*****")
-            self._app.top_window().Edit1.type_keys(user)
-            self._app.top_window().Edit2.type_keys(password)
-            edit3 = self._app.top_window().window(control_id=0x3eb)
+
+            self._app.window(handle=login_window).Edit1.type_keys(user)
+            self._app.window(handle=login_window).Edit2.type_keys(password)
+            edit3 = self._app.window(handle=login_window).window(control_id=0x3eb)
             while True:
                 try:
-                    code = self._handle_verify_code()
+                    code = self._handle_verify_code(handle=login_window)
                     edit3.type_keys(code)
                     logger.debug("解析验证码：%s",code)
                     time.sleep(1)
-                    self._app.top_window()["确定(Y)"].click()
+                    self._app.window(handle=login_window)["确定(Y)"].click()
                     # detect login is success or not
                     try:
-                        self._app.top_window().wait_not("exists", 5)
+                        self._app.window(handle=login_window).wait_not("exists", 5)
                         break
 
                     # pylint: disable=broad-except
                     except Exception:
-                        self._app.top_window()["确定"].click()
+                        self._app.window(handle=login_window)["确定"].click()
 
                 # pylint: disable=broad-except
                 except Exception:
@@ -88,7 +89,7 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
         self._main = self._app.window(title="网上股票交易系统5.0")
 
     def _handle_verify_code(self):
-        control = self._app.top_window().window(control_id=0x5db)
+        control = self._app.window(handle=login_window).window(control_id=0x5db)
         control.click()
         time.sleep(0.2)
         file_path = tempfile.mktemp() + ".jpg"

@@ -74,25 +74,24 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             login_window.Edit2.type_keys(password)
 
             logger.info("准备开始解析验证码")
-            while True:
+            retry = 0
+            while retry<5:
                 try:
                     code = self._handle_verify_code(handle=login_window_handle)
                     login_window.Edit3.type_keys(code)
                     logger.info("解析验证码解析成功，并输入到Edit框：%s",code)
                     time.sleep(1)
+                    # 点击右侧的确定按钮来登录
                     self._app.window(handle=login_window)["确定(Y)"].click()
-                    # detect login is success or not
-                    try:
-                        self._app.window(handle=login_window).wait_not("exists", 5)
-                        break
-
-                    # pylint: disable=broad-except
-                    except Exception:
-                        self._app.window(handle=login_window)["确定"].click()
-
+                    # 等待登录窗口消失
+                    self._app.window(handle=login_window).wait_not("exists", 5)
+                    # 跳出去
+                    break
                 # pylint: disable=broad-except
                 except Exception:
-                    pass
+                    time.sleep(1)
+                    logger.debug("登录失败，再一次尝试")
+                    retry+= 1
 
             logger.debug("再一次尝试启动软件...")
             self._app = pywinauto.Application().connect(
@@ -100,12 +99,17 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             )
         self._main = self._app.window(title="网上股票交易系统5.0")
 
-    def _handle_verify_code(self,login_window_handle):
-        control = self._app.window(handle=login_window_handle).window(control_id=0x5db)
+    def _handle_verify_code(self,handle):
+        control = self._app.window(handle=handle).window(control_id=0x5db)
         control.click()
         time.sleep(0.2)
         file_path = tempfile.mktemp() + ".jpg"
-        control.capture_as_image().save(file_path)
+        # 新版同花顺的登录验证码居然是分成了2部分，3个数字+1个数字，很恶心，需要hack一下宽度，扩大一些来存图片
+        rect = control.rectangle()
+        height = rect.bottom - rect.top
+        rect.right += height
+        control.capture_as_image(rect).save(file_path)
         time.sleep(0.2)
-        vcode = recognize_verify_code(file_path, "gj_client")
+        vcode = recognize_verify_code(file_path)
+        logger.debug("验证码识别结果：%s",vcode)
         return "".join(re.findall("[a-zA-Z0-9]+", vcode))

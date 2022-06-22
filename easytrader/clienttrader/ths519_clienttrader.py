@@ -56,23 +56,22 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             while True:
                 try:
                     logger.info("启动软件完成，查找登录窗口")
-                    login_window = pywinauto.findwindows.find_window(class_name='#32770', found_index=1)
+                    login_window_handle = pywinauto.findwindows.find_window(class_name='#32770', found_index=1)
+                    login_window = self._app.window(handle=login_window_handle).Edit1.wait("ready")
                     break
                 except RuntimeError:
                     pass
 
             logger.info("自动输入：用户[%s]、密码[%s]",user,password[:2]+"*****")
-            print(self._app.window(handle=login_window).Edit1)
-            self._app.window(handle=login_window).Edit1.set_focus()
-            self._app.window(handle=login_window).Edit1.type_keys(user)
-            self._app.window(handle=login_window).Edit2.set_focus()
-            self._app.window(handle=login_window).Edit2.type_keys(password)
-            edit3 = self._app.window(handle=login_window).window(control_id=0x3eb)
+            login_window.Edit1.set_focus()
+            login_window.Edit1.type_keys(user)
+            login_window.Edit2.set_focus()
+            login_window.Edit2.type_keys(password)
             while True:
                 try:
                     logger.info("准备开始解析验证码")
                     code = self._handle_verify_code(handle=login_window)
-                    edit3.type_keys(code)
+                    login_window.Edit3.type_keys(code)
                     logger.info("解析验证码解析成功，并输入：%s",code)
                     time.sleep(1)
                     self._app.window(handle=login_window)["确定(Y)"].click()

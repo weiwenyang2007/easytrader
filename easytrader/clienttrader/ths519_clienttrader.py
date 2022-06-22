@@ -59,14 +59,15 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             while True:
                 try:
                     login_window_handle = pywinauto.findwindows.find_window(class_name='#32770', found_index=1)
-                    login_window = self._app.window(handle=login_window_handle).Edit1.wait("ready")
+                    login_window = self._app.window(handle=login_window_handle)
+                    login_window.Edit1.wait("ready")
                     break
                 except WindowNotFoundError:
                     logger.debug(".")
                     time.sleep(1)
 
             logger.info("登录窗口出现，准备输入用户名和密码")
-            logger.info("自动输入：用户[%s]、密码[%s]",user,password[:2]+"*****")
+            logger.info("自动输入：用户[%s]、密码[%s]",user,password[:2]+"****")
             login_window.Edit1.set_focus()
             login_window.Edit1.type_keys(user)
             login_window.Edit2.set_focus()

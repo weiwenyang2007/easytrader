@@ -72,12 +72,13 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             login_window.Edit1.type_keys(user)
             login_window.Edit2.set_focus()
             login_window.Edit2.type_keys(password)
+
+            logger.info("准备开始解析验证码")
             while True:
                 try:
-                    logger.info("准备开始解析验证码")
-                    code = self._handle_verify_code(handle=login_window)
+                    code = self._handle_verify_code(handle=login_window_handle)
                     login_window.Edit3.type_keys(code)
-                    logger.info("解析验证码解析成功，并输入：%s",code)
+                    logger.info("解析验证码解析成功，并输入到Edit框：%s",code)
                     time.sleep(1)
                     self._app.window(handle=login_window)["确定(Y)"].click()
                     # detect login is success or not
@@ -99,8 +100,8 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             )
         self._main = self._app.window(title="网上股票交易系统5.0")
 
-    def _handle_verify_code(self,login_window):
-        control = self._app.window(handle=login_window).window(control_id=0x5db)
+    def _handle_verify_code(self,login_window_handle):
+        control = self._app.window(handle=login_window_handle).window(control_id=0x5db)
         control.click()
         time.sleep(0.2)
         file_path = tempfile.mktemp() + ".jpg"

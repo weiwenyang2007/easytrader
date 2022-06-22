@@ -78,13 +78,14 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             while retry<5:
                 try:
                     code = self._handle_verify_code(handle=login_window_handle)
+                    login_window.Edit3.type_keys('^a{BACKSPACE}')
                     login_window.Edit3.type_keys(code)
                     logger.info("解析验证码解析成功，并输入到Edit框：%s",code)
                     time.sleep(1)
                     # 点击右侧的确定按钮来登录
-                    self._app.window(handle=login_window)["确定(Y)"].click()
+                    self._app.window(handle=login_window_handle)["确定(Y)"].click()
                     # 等待登录窗口消失
-                    self._app.window(handle=login_window).wait_not("exists", 5)
+                    self._app.window(handle=login_window_handle).wait_not("exists", 5)
                     # 跳出去
                     break
                 # pylint: disable=broad-except

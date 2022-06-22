@@ -12,6 +12,7 @@ while True:
         print("Login dialog is ready")
         break
     except Exception as e:
+
         # print(traceback.format_exc())
         _app = pywinauto.Application().start("c:\\software\\ths\\xiadan.exe", timeout=6)
         print("Start up xiadan.exe")

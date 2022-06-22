@@ -3,6 +3,8 @@ import re
 import time
 import tempfile
 import pywinauto
+from pywinauto.findwindows import WindowNotFoundError
+
 from easytrader.utils.captcha import recognize_verify_code
 
 from easytrader.clienttrader import clienttrader
@@ -53,15 +55,17 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
             self._app = pywinauto.Application().start(exe_path)
 
             # wait login window ready
+            logger.info("启动软件完毕，等待登录窗口出现")
             while True:
                 try:
-                    logger.info("启动软件完成，查找登录窗口")
                     login_window_handle = pywinauto.findwindows.find_window(class_name='#32770', found_index=1)
                     login_window = self._app.window(handle=login_window_handle).Edit1.wait("ready")
                     break
-                except RuntimeError:
-                    pass
+                except WindowNotFoundError:
+                    logger.debug(".")
+                    time.sleep(1)
 
+            logger.info("登录窗口出现，准备输入用户名和密码")
             logger.info("自动输入：用户[%s]、密码[%s]",user,password[:2]+"*****")
             login_window.Edit1.set_focus()
             login_window.Edit1.type_keys(user)

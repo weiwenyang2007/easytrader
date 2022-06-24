@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
+import logging
 import re
-import time
 import tempfile
+import time
+
 import pywinauto
 from pywinauto.findwindows import WindowNotFoundError
 
-from easytrader.utils.captcha import recognize_verify_code
-
 from easytrader.clienttrader import clienttrader
 from easytrader.strategy import grid_strategies
-import logging
+from easytrader.utils.captcha import recognize_verify_code
 
 logger = logging.getLogger(__name__)
+
 
 class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
     """
@@ -51,7 +52,7 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
 
         # pylint: disable=broad-except
         except Exception:
-            logger.info("尝试连接到原有进程失败，重新启动软件：%s",exe_path)
+            logger.info("尝试连接到原有进程失败，重新启动软件：%s", exe_path)
             self._app = pywinauto.Application().start(exe_path)
 
             # wait login window ready
@@ -67,7 +68,7 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
                     time.sleep(1)
 
             logger.info("登录窗口出现，准备输入用户名和密码")
-            logger.info("自动输入：用户[%s]、密码[%s]",user,password[:2]+"****")
+            logger.info("自动输入：用户[%s]、密码[%s]", user, password[:2] + "****")
             login_window.Edit1.set_focus()
             login_window.Edit1.type_keys(user)
             login_window.Edit2.set_focus()
@@ -75,12 +76,12 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
 
             logger.info("准备开始解析验证码")
             retry = 0
-            while retry<5:
+            while retry < 5:
                 try:
                     code = self._handle_verify_code(handle=login_window_handle)
                     login_window.Edit3.type_keys('^a{BACKSPACE}')
                     login_window.Edit3.type_keys(code)
-                    logger.info("解析验证码解析成功，并输入到Edit框：%s",code)
+                    logger.info("解析验证码解析成功，并输入到Edit框：%s", code)
                     time.sleep(1)
                     # 点击右侧的确定按钮来登录
                     self._app.window(handle=login_window_handle)["确定(Y)"].click()
@@ -92,15 +93,16 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
                 except Exception:
                     time.sleep(1)
                     logger.debug("登录失败，再一次尝试")
-                    retry+= 1
+                    retry += 1
 
             logger.debug("再一次尝试启动软件...")
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=10
             )
+        logger.debug("主窗口：%r", self._app.window(title="网上股票交易系统5.0"))
         self._main = self._app.window(title="网上股票交易系统5.0")
 
-    def _handle_verify_code(self,handle):
+    def _handle_verify_code(self, handle):
         control = self._app.window(handle=handle).window(control_id=0x5db)
         control.click()
         time.sleep(0.2)
@@ -112,5 +114,5 @@ class THS519ClientTrader(clienttrader.BaseLoginClientTrader):
         control.capture_as_image(rect).save(file_path)
         time.sleep(0.2)
         vcode = recognize_verify_code(file_path)
-        logger.debug("验证码识别结果：%s",vcode)
+        logger.debug("验证码识别结果：%s", vcode)
         return "".join(re.findall("[a-zA-Z0-9]+", vcode))

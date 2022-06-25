@@ -47,7 +47,8 @@ class UniversalClientTrader(clienttrader.BaseLoginClientTrader):
             self._app.window(handle=login_window).Edit2.set_focus()
             self._app.window(handle=login_window).Edit2.type_keys(password)
 
-            self._app.window(handle=login_window).button9.click()
+            # 点击登录按钮
+            self._app.window(handle=login_window)['登录'].click()
 
             # detect login is success or not
             # self._app.top_window().wait_not("exists", 100)

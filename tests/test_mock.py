@@ -78,8 +78,8 @@ class TestMockClientTrader(unittest.TestCase):
 
 
 """
-ACCOUNT=mx_614935125
-PASSWORD=Welcome1
+set ACCOUNT=mx_614935125
+set PASSWORD=Welcome1
 python -m unittest tests.test_mock.TestMockClientTrader.test_balance
 python -m unittest tests.test_mock.TestMockClientTrader.test_buy
 """

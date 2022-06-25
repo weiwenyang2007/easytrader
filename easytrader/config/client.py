@@ -187,7 +187,7 @@ class HTZQ(CommonConfig):
 
 
 class UNIVERSAL(CommonConfig):
-    DEFAULT_EXE_PATH = r"c:\\ths\\xiadan.exe"
+    DEFAULT_EXE_PATH = r"c:\\software\\ths\\xiadan.exe"
 
     BALANCE_CONTROL_ID_GROUP = {
         "资金余额": 1012,

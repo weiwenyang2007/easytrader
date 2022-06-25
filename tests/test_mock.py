@@ -22,7 +22,7 @@ class TestMockClientTrader(unittest.TestCase):
         # input your test account and password
         cls._ACCOUNT = os.environ.get("ACCOUNT")
         cls._PASSWORD = os.environ.get("PASSWORD")
-        cls._user = easytrader.uscce("universal_client")
+        cls._user = easytrader.use("universal_client")
         print("准备登录:", cls._ACCOUNT, cls._PASSWORD)
         cls._user.enable_type_keys_for_editor()
         cls._user.prepare(user=cls._ACCOUNT, password=cls._PASSWORD)

@@ -120,20 +120,22 @@ class Copy(BaseStrategy):
                         # )  # 模拟输入验证码
                         # https://github.com/shidenggui/easytrader/issues/452
 
-                        editor = self._trader.app.top_window().child_window(control_id=0x964,class_name="Edit")
+                        editor = self._trader.app.top_window().child_window(control_id=0x964,class_name="Edit")# 0x964是验证码输入框
                         editor.select()
                         editor.type_keys(captcha_num)
                         self._trader.app.top_window().set_focus()
                         pywinauto.keyboard.SendKeys("{ENTER}")  # 模拟发送enter，点击确定
                         try:
+                            self._trader.wait(0.5)
+                            # 下面的"验证码错误！"label，如果不存在（会触发异常），说明识别通过了
                             logger.info(
                                 self._trader.app.top_window()
                                     .window(control_id=0x966, class_name="Static")
                                     .window_text()
                             )
                         except Exception as ex:  # 窗体消失
-                            logger.exception(ex)
                             found = True
+                            logger.info("识别完成")
                             break
                     count -= 1
                     self._trader.wait(0.1)

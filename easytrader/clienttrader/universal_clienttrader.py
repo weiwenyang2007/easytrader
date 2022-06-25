@@ -5,7 +5,9 @@ import pywinauto.clipboard
 
 from easytrader.strategy import grid_strategies
 from easytrader.clienttrader import clienttrader
+import logging
 
+logger = logging.getLogger(__name__)
 
 class UniversalClientTrader(clienttrader.BaseLoginClientTrader):
     grid_strategy = grid_strategies.Copy # Xls
@@ -29,14 +31,17 @@ class UniversalClientTrader(clienttrader.BaseLoginClientTrader):
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=1
             )
+            logger.info("尝试连接到原有进程成功")
         # pylint: disable=broad-except
         except Exception:
             self._app = pywinauto.Application().start(exe_path)
+            logger.info("尝试连接到原有进程失败，重新启动软件：%s", exe_path)
 
             # wait login window ready
             while True:
                 try:
                     login_window = pywinauto.findwindows.find_window(class_name='#32770', found_index=1)
+                    logger.info("登录对话框ready")
                     break
                 except:
                     self.wait(1)
@@ -45,12 +50,15 @@ class UniversalClientTrader(clienttrader.BaseLoginClientTrader):
             self._app.window(handle=login_window).Edit1.set_focus()
             self._app.window(handle=login_window).Edit1.type_keys('^a{BACKSPACE}')
             self._app.window(handle=login_window).Edit1.type_keys(user)
+            logger.info("输入用户名：%s",self._app.window(handle=login_window).Edit1.texts())
             self._app.window(handle=login_window).Edit2.set_focus()
             self._app.window(handle=login_window).Edit2.type_keys('^a{BACKSPACE}')
             self._app.window(handle=login_window).Edit2.type_keys(password)
+            logger.info("输入密码：%s", self._app.window(handle=login_window).Edit2.texts())
 
             # 点击登录按钮
             self._app.window(handle=login_window)['登录'].click()
+            logger.info("点击登录按钮")
 
             # detect login is success or not
             # self._app.top_window().wait_not("exists", 100)

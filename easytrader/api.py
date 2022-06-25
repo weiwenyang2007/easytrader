@@ -67,7 +67,7 @@ def use(broker, debug=False, **kwargs):
         return UniversalClientTrader()
 
     if broker.lower() in ["ths", "同花顺客户端"]:
-        from .clienttrader import ClientTrader
+        from easytrader.clienttrader.clienttrader import ClientTrader
 
         return ClientTrader()
 

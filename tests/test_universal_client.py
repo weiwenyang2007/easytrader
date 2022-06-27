@@ -14,7 +14,7 @@ import unittest
 sys.path.append(".")
 
 
-class TestTHS519ClientTrader(unittest.TestCase):
+class TestUniversalClientTrader(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -85,7 +85,7 @@ class TestTHS519ClientTrader(unittest.TestCase):
 """
 ACCOUNT= \
 PASSWORD= \
-python -m unittest tests.test_new_ths.TestTHS519ClientTrader.test_buy
+python -m unittest tests.test_new_ths.TestUniversalClientTrader.test_cancel
 """
 if __name__ == "__main__":
     unittest.main(verbosity=2)

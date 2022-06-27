@@ -427,9 +427,11 @@ class ClientTrader(IClientTrader):
     @perf_clock
     def _submit_trade(self):
         time.sleep(0.2)
-        self._main.child_window(
+        buy_button = self._main.child_window(
             control_id=self._config.TRADE_SUBMIT_CONTROL_ID, class_name="Button"
-        ).click()
+        )
+        buy_button.set_focus()
+        buy_button.click()
 
     @perf_clock
     def __get_top_window_pop_dialog(self):

@@ -45,7 +45,7 @@ class TestTHS519ClientTrader(unittest.TestCase):
 
     def test_buy(self):
         time.sleep(2)
-        result = self._user.buy('162411', price=0.05, amount=100)
+        result = self._user.market_buy('600106',amount=100)
         print("尝试买入：")
         print(result)
 
@@ -80,7 +80,7 @@ class TestTHS519ClientTrader(unittest.TestCase):
 """
 ACCOUNT= \
 PASSWORD= \
-python -m unittest tests.test_new_ths.TestTHS519ClientTrader.test_balance
+python -m unittest tests.test_new_ths.TestTHS519ClientTrader.test_buy
 """
 if __name__ == "__main__":
     unittest.main(verbosity=2)

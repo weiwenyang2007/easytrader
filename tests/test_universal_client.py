@@ -52,40 +52,13 @@ class TestUniversalClientTrader(unittest.TestCase):
 
     def test_cancel(self):
         entrust_no = '2889423298'
-        self._user.cancel_entrusts(entrust_no)
-
-    # def test_today_entrusts(self):
-    #     result = self._user.today_entrusts
-    #
-    # def test_today_trades(self):
-    #     result = self._user.today_trades
-    #
-    # def test_cancel_entrusts(self):
-    #     result = self._user.cancel_entrusts
-    #
-    # def test_cancel_entrust(self):
-    #     result = self._user.cancel_entrust("123456789")
-    #
-    # def test_invalid_buy(self):
-    #     import easytrader
-    #
-    #     with self.assertRaises(easytrader.exceptions.TradeError):
-    #         result = self._user.buy("511990", 1, 1e10)
-    #
-    # def test_invalid_sell(self):
-    #     import easytrader
-    #
-    #     with self.assertRaises(easytrader.exceptions.TradeError):
-    #         result = self._user.sell("162411", 200, 1e10)
-    #
-    # def test_auto_ipo(self):
-    #     self._user.auto_ipo()
+        self._user.cancel_entrust(entrust_no)
 
 
 """
 ACCOUNT= \
 PASSWORD= \
-python -m unittest tests.test_new_ths.TestUniversalClientTrader.test_cancel
+python -m unittest tests.test_universal_client.TestUniversalClientTrader.test_cancel
 """
 if __name__ == "__main__":
     unittest.main(verbosity=2)

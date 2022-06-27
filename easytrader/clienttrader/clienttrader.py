@@ -170,6 +170,7 @@ class ClientTrader(IClientTrader):
         self.refresh()
         for i, entrust in enumerate(self.cancel_entrusts):
             if entrust[self._config.CANCEL_ENTRUST_ENTRUST_FIELD] == entrust_no:
+                logger.debug("查找到合同单号[%s]的委托单",entrust_no)
                 self._cancel_entrust_by_double_click(i)
                 return self._handle_pop_dialogs()
         return {"message": "委托单状态错误不能撤单, 该委托单可能已经成交或者已撤"}
@@ -267,6 +268,8 @@ class ClientTrader(IClientTrader):
         """
         code = security[-6:]
         self._type_edit_control_keys(self._config.TRADE_SECURITY_CONTROL_ID, code)
+        logger.debug("输入股票代码：%s",code)
+
         if ttype is not None:
             retry = 0
             retry_max = 10
@@ -277,9 +280,11 @@ class ClientTrader(IClientTrader):
                 except:
                     retry += 1
                     self.wait(0.1)
+        # 设置买入数量
         self._set_market_trade_params(security, amount, limit_price=limit_price)
         self._submit_trade()
 
+        # 买入后，有一个确认对话框，处理它
         return self._handle_pop_dialogs(
             handler_class=pop_dialog_handler.TradePopDialogHandler
         )
@@ -430,6 +435,9 @@ class ClientTrader(IClientTrader):
         buy_button = self._main.child_window(
             control_id=self._config.TRADE_SUBMIT_CONTROL_ID, class_name="Button"
         )
+        # 2022.6, piginzoo，关闭vnc后操作失败，观察到股票号码和金额都输入了，按钮id也对，vnc开着就可以，关闭就不行
+        # 测试的时候，把光标移走也偶然失败，所以，判定是光标位置导致，虽然不是100%确认，
+        # 所以提交前，先设置光标
         buy_button.set_focus()
         buy_button.click()
 
@@ -475,7 +483,11 @@ class ClientTrader(IClientTrader):
         self._type_edit_control_keys(
             self._config.TRADE_AMOUNT_CONTROL_ID, str(int(amount))
         )
-        self.wait(0.1)
+        logger.debug("输入买入数量：%d",int(amount))
+
+        self.wait(0.2)
+
+        # 设置买入价格，这个限价买入采用，市价买入不用
         price_control = None
         if str(security).startswith("68"):  # 科创板存在限价
             try:
@@ -496,12 +508,13 @@ class ClientTrader(IClientTrader):
         )
 
     def _type_edit_control_keys(self, control_id, text):
+        logger.debug("输入文本：%s", text)
+
         if not self._editor_need_type_keys:
             self._main.child_window(
                 control_id=control_id, class_name="Edit"
             ).set_edit_text(text)
         else:
-            logger.debug("输入文本：%s", text)
             editor = self._main.child_window(control_id=control_id, class_name="Edit")
             editor.select()
             editor.type_keys(text)
@@ -554,10 +567,12 @@ class ClientTrader(IClientTrader):
             self._config.CANCEL_ENTRUST_GRID_FIRST_ROW_HEIGHT
             + self._config.CANCEL_ENTRUST_GRID_ROW_HEIGHT * row
         )
+        # 双击取消订单（软件上双击或回车可撤单）
         self._app.top_window().child_window(
             control_id=self._config.COMMON_GRID_CONTROL_ID,
             class_name="CVirtualGridCtrl",
-        ).double_click(coords=(x, y))
+        ).double_click(coords=(x, y)) #<--- 双击
+        logger.debug("双击第%d行，用于撤单",row)
 
     def refresh(self):
         self.refresh_strategy.set_trader(self)
@@ -570,12 +585,15 @@ class ClientTrader(IClientTrader):
         while self.is_exist_pop_dialog():
             try:
                 title = self._get_pop_dialog_title()
+                logger.debug("获得对话框标题：%s",title)
             except pywinauto.findwindows.ElementNotFoundError:
+                logger.debug("未找到对话框")
                 return {"message": "success"}
-
+            # handler就是对话框，handle()方法是%Y关闭
             result = handler.handle(title)
             if result:
                 return result
+        logger.debug("未出现任何对话框，只好返回")
         return {"message": "success"}
 
 

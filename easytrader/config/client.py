@@ -33,7 +33,7 @@ class CommonConfig:
     TRADE_CANCEL_ALL_ENTRUST_CONTROL_ID = 30001
 
     TRADE_SECURITY_CONTROL_ID = 1032
-    TRADE_PRICE_CONTROL_ID = 1033
+    TRADE_PRICE_CONTROL_ID = 1033 # 0x409,'买入价格'按钮
     TRADE_AMOUNT_CONTROL_ID = 1034
 
     TRADE_SUBMIT_CONTROL_ID = 1006 # 0x3EE,'买入'按钮
@@ -62,7 +62,7 @@ class CommonConfig:
         "总资产": 1015,
     }
 
-    POP_DIALOD_TITLE_CONTROL_ID = 1365
+    POP_DIALOD_TITLE_CONTROL_ID = 1365 # 0x555
 
     GRID_DTYPE = {
         "操作日期": str,

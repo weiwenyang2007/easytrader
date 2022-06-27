@@ -6,6 +6,9 @@ from typing import Optional
 from easytrader import exceptions
 from easytrader.utils.perf import perf_clock
 from easytrader.utils.win_gui import SetForegroundWindow, ShowWindow, win32defines
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class PopDialogHandler:
@@ -14,6 +17,12 @@ class PopDialogHandler:
 
     @staticmethod
     def _set_foreground(window):
+        """
+        设置把窗口弄到前台前景
+        :param window:
+        :return:
+        """
+
         if window.has_style(win32defines.WS_MINIMIZE):  # if minimized
             ShowWindow(window.wrapper_object(), 9)  # restore window state
         else:
@@ -23,15 +32,18 @@ class PopDialogHandler:
     def handle(self, title):
         if any(s in title for s in {"提示信息", "委托确认", "网上交易用户协议", "撤单确认"}):
             self._submit_by_shortcut()
+            logger.debug("使用快捷键%Y提交标题为[%s]的对话框", title)
             return None
 
         if "提示" in title:
             content = self._extract_content()
             self._submit_by_click()
+            logger.debug("使用鼠标点击Y，处理标题为[%s]的对话框，提取对话框上的提示文字：%s", title, content)
             return {"message": content}
 
         content = self._extract_content()
         self._close()
+        logger.debug("处理标题为[%s]的对话框，提取对话框上的提示文字：%s", title, content)
         return {"message": "unknown message: {}".format(content)}
 
     def _extract_content(self):

@@ -10,6 +10,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 class UniversalClientTrader(clienttrader.BaseLoginClientTrader):
+
+    # piginzoo,默认使用拷贝的方法，来获得THS上的界面上的信息
     grid_strategy = grid_strategies.Copy # Xls
 
     @property

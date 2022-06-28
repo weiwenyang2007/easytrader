@@ -78,7 +78,10 @@ class Copy(BaseStrategy):
     def get(self, control_id: int) -> List[Dict]:
         grid = self._get_grid(control_id)
         self._set_foreground(grid)
+        # Clt-A + Clt-C
         grid.type_keys("^A^C", set_foreground=False)
+
+        # 从剪贴板获得相应信息
         content = self._get_clipboard_data()
         return self._format_grid_data(content)
 
@@ -99,6 +102,7 @@ class Copy(BaseStrategy):
             if (
                     self._trader.app.top_window().window(class_name="Static", title_re="验证码").exists(timeout=1)
             ):
+                logger.debug("验证码对话框弹出，需要OCR识别")
                 file_path = "tmp.png"
                 count = 5
                 found = False
@@ -144,8 +148,6 @@ class Copy(BaseStrategy):
                     ).click()
                 if not found:
                     self._trader.app.top_window().Button2.click()  # 点击取消
-            else:
-                Copy._need_captcha_reg = False
         count = 5
         while count > 0:
             try:

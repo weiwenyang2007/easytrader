@@ -40,7 +40,7 @@ class CommonConfig:
 
     TRADE_MARKET_TYPE_CONTROL_ID = 1541
 
-    COMMON_GRID_CONTROL_ID = 1047
+    COMMON_GRID_CONTROL_ID = 1047 #0x417 ，grid控件
 
     COMMON_GRID_CONTROL_ID_NEW = 1308 # 另外一种grid控件，显示了资金总体情况，这个是使用spy++捕获出来的
 

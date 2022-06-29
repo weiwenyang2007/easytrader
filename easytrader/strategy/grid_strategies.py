@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import abc
 import io
+import os
 import tempfile
 from io import StringIO
 from typing import TYPE_CHECKING, Dict, List, Optional
@@ -103,7 +104,9 @@ class Copy(BaseStrategy):
                     self._trader.app.top_window().window(class_name="Static", title_re="验证码").exists(timeout=1)
             ):
                 logger.debug("验证码对话框弹出，需要OCR识别")
-                file_path = "tmp.png"
+
+                file_path = tempfile.mktemp()+".png"
+
                 count = 5
                 found = False
                 while count > 0:

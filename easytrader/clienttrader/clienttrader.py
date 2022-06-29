@@ -168,7 +168,9 @@ class ClientTrader(IClientTrader):
     @perf_clock
     def cancel_entrust(self, entrust_no):
         self.refresh()
+        # 遍历整个[撤单]列表中的合同编号entrust_no
         for i, entrust in enumerate(self.cancel_entrusts):
+            # 如果找到匹配的合同编号
             if entrust[self._config.CANCEL_ENTRUST_ENTRUST_FIELD] == entrust_no:
                 logger.debug("查找到合同单号[%s]的委托单",entrust_no)
                 self._cancel_entrust_by_double_click(i)

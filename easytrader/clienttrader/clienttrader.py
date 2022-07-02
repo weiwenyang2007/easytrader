@@ -482,6 +482,7 @@ class ClientTrader(IClientTrader):
         )
 
     def _set_market_trade_params(self, security, amount, limit_price=None):
+        # 输入购买数量
         self._type_edit_control_keys(
             self._config.TRADE_AMOUNT_CONTROL_ID, str(int(amount))
         )
@@ -498,6 +499,7 @@ class ClientTrader(IClientTrader):
                 )
             except:
                 pass
+        # 输入限制价格（只能作用于创业板啊？！）
         if price_control is not None:
             price_control.set_edit_text(limit_price)
 

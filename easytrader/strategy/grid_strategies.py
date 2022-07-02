@@ -103,7 +103,7 @@ class Copy(BaseStrategy):
             if (
                     self._trader.app.top_window().window(class_name="Static", title_re="验证码").exists(timeout=1)
             ):
-                logger.debug("验证码对话框弹出，需要OCR识别")
+                # logger.debug("验证码对话框弹出，需要OCR识别")
 
                 file_path = tempfile.mktemp()+".png"
 
@@ -118,7 +118,7 @@ class Copy(BaseStrategy):
 
                     captcha_num = captcha_recognize(file_path).strip()  # 识别验证码
                     captcha_num = "".join(captcha_num.split())
-                    logger.info("验证码识别结果：%s" , captcha_num)
+                    # logger.info("验证码识别结果：%s" , captcha_num)
                     if len(captcha_num) == 4:
                         # self._trader.app.top_window().window(
                         #     control_id=0x964, class_name="Edit"
@@ -142,7 +142,7 @@ class Copy(BaseStrategy):
                             )
                         except Exception as ex:  # 窗体消失
                             found = True
-                            logger.info("识别完成")
+                            # logger.info("识别完成")
                             break
                     count -= 1
                     self._trader.wait(0.1)

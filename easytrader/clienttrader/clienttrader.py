@@ -20,6 +20,7 @@ from easytrader.strategy.refresh_strategies import IRefreshStrategy
 from easytrader.utils.misc import file2dict
 from easytrader.utils.perf import perf_clock
 
+
 if not sys.platform.startswith("darwin"):
     import pywinauto
     import pywinauto.clipboard

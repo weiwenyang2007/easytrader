@@ -33,7 +33,7 @@ class UniversalClientTrader(clienttrader.BaseLoginClientTrader):
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=1
             )
-            logger.info("尝试连接到原有进程成功")
+            # logger.info("尝试连接到原有进程成功")
         # pylint: disable=broad-except
         except Exception:
             self._app = pywinauto.Application().start(exe_path)

@@ -194,8 +194,11 @@ class UNIVERSAL(CommonConfig):
     BALANCE_CONTROL_ID_GROUP = {
         "资金余额": 1012,
         "可用金额": 1016,
-        "可取金额": 1017,
+        # "可取金额": 1017,
+        # "冻结金额": 0x3F5,
+        "股票市值": 1014,
         "总资产": 1015,
+        "持仓盈亏": 0x403,
     }
 
     AUTO_IPO_NUMBER = '可申购数量'

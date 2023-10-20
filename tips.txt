@@ -1,4 +1,7 @@
- 1. install software:
+0. This project is clone from https://github.com/piginzoo/easytrader
+   Another project is a good reference: easytrader-liudongming
+
+1. install software:
      Anaconda3-2023.09-0-Windows-x86_64.exe	 
      which _conda.exe
 	 /c/ProgramData/anaconda3/_conda.exe

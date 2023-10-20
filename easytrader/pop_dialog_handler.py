@@ -30,9 +30,15 @@ class PopDialogHandler:
 
     @perf_clock
     def handle(self, title):
+        print('PopDialogHandler title='+str(title))
         if any(s in title for s in {"提示信息", "委托确认", "网上交易用户协议", "撤单确认"}):
             self._submit_by_shortcut()
             logger.debug("使用快捷键%Y提交标题为[%s]的对话框", title)
+            print('return None from PopDialogHandler handle')
+            #try below wa:
+            if "撤单确认" == title:
+                return {"message": "撤单确认 成功"}
+                
             return None
 
         if "提示" in title:

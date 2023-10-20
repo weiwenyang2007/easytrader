@@ -60,7 +60,7 @@ class IClientTrader(abc.ABC):
 
 
 class ClientTrader(IClientTrader):
-    _editor_need_type_keys = False
+    _editor_need_type_keys = True #default is False
     # The strategy to use for getting grid data
     grid_strategy: Union[IGridStrategy, Type[IGridStrategy]] = grid_strategies.Copy
     _grid_strategy_instance: IGridStrategy = None
@@ -164,17 +164,24 @@ class ClientTrader(IClientTrader):
         self.refresh()
         self._switch_left_menus(["撤单[F3]"])
 
-        return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
+        items = self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
+        #print(items)
+        return items
 
     @perf_clock
     def cancel_entrust(self, entrust_no):
         self.refresh()
+        print('entrust_no='+str(entrust_no))
         # 遍历整个[撤单]列表中的合同编号entrust_no
         for i, entrust in enumerate(self.cancel_entrusts):
             # 如果找到匹配的合同编号
+            print('it='+str(entrust))
+            print('if='+str(entrust[self._config.CANCEL_ENTRUST_ENTRUST_FIELD]))
             if entrust[self._config.CANCEL_ENTRUST_ENTRUST_FIELD] == entrust_no:
                 logger.debug("查找到合同单号[%s]的委托单",entrust_no)
-                self._cancel_entrust_by_double_click(i)
+                print('命中:' +str(i))
+                double_click_rtn = self._cancel_entrust_by_double_click(i)
+                print('double_click_rtn='+str(double_click_rtn))
                 return self._handle_pop_dialogs()
         return {"message": "委托单状态错误不能撤单, 该委托单可能已经成交或者已撤"}
 
@@ -272,6 +279,7 @@ class ClientTrader(IClientTrader):
         code = security[-6:]
         self._type_edit_control_keys(self._config.TRADE_SECURITY_CONTROL_ID, code)
         logger.debug("输入股票代码：%s",code)
+        print('输入股票代码: ' + str(code))
 
         if ttype is not None:
             retry = 0
@@ -285,6 +293,8 @@ class ClientTrader(IClientTrader):
                     self.wait(0.1)
         # 设置买入数量
         self._set_market_trade_params(security, amount, limit_price=limit_price)
+        print('买入价格: ' +str(limit_price))
+        print('买入数量: ' +str(amount))
         self._submit_trade()
 
         # 买入后，有一个确认对话框，处理它
@@ -459,12 +469,18 @@ class ClientTrader(IClientTrader):
         )
 
     def _set_trade_params(self, security, price, amount):
+        #print('security='+str(security))
+        #print('price='+str(price))
+        #print('amount='+str(amount))
+        
         code = security[-6:]
+        #print('code='+str(code))
 
-        self._type_edit_control_keys(self._config.TRADE_SECURITY_CONTROL_ID, code)
+        edit_rtn = self._type_edit_control_keys(self._config.TRADE_SECURITY_CONTROL_ID, code)
+        #print('edit_rtn='+str(edit_rtn))#None
 
         # wait security input finish
-        self.wait(0.1)
+        self.wait(0.5)
 
         # 设置交易所
         if security.lower().startswith("sz"):
@@ -472,7 +488,7 @@ class ClientTrader(IClientTrader):
         if security.lower().startswith("sh"):
             self._set_stock_exchange_type("上海Ａ股")
 
-        self.wait(0.1)
+        self.wait(0.5)
 
         self._type_edit_control_keys(
             self._config.TRADE_PRICE_CONTROL_ID,
@@ -567,16 +583,20 @@ class ClientTrader(IClientTrader):
             count = count - 1
 
     def _cancel_entrust_by_double_click(self, row):
-        x = self._config.CANCEL_ENTRUST_GRID_LEFT_MARGIN
+        x = self._config.CANCEL_ENTRUST_GRID_LEFT_MARGIN #50
         y = (
-            self._config.CANCEL_ENTRUST_GRID_FIRST_ROW_HEIGHT
-            + self._config.CANCEL_ENTRUST_GRID_ROW_HEIGHT * row
+            self._config.CANCEL_ENTRUST_GRID_FIRST_ROW_HEIGHT #30
+            + self._config.CANCEL_ENTRUST_GRID_ROW_HEIGHT * row #16 x i
         )
+        print('x='+str(x) + ',y='+str(y))#(50,30) when i=0
+        x = 100 #x=50貌似不够哦，需要100
+        
         # 双击取消订单（软件上双击或回车可撤单）
-        self._app.top_window().child_window(
+        click_rtn = self._app.top_window().child_window(
             control_id=self._config.COMMON_GRID_CONTROL_ID,
             class_name="CVirtualGridCtrl",
-        ).double_click(coords=(x, y)) #<--- 双击
+        ).double_click(coords=(x, y)) #<--- x=50貌似不够哦，需要100
+        print('click_rtn='+str(click_rtn))
         logger.debug("双击第%d行，用于撤单",row)
 
     def refresh(self):
@@ -586,16 +606,21 @@ class ClientTrader(IClientTrader):
     @perf_clock
     def _handle_pop_dialogs(self, handler_class=pop_dialog_handler.PopDialogHandler):
         handler = handler_class(self._app)
-
+        print('handler='+str(handler))
         while self.is_exist_pop_dialog():
             try:
                 title = self._get_pop_dialog_title()
                 logger.debug("获得对话框标题：%s",title)
+                print("获得对话框标题："+str(title))#撤单确认
             except pywinauto.findwindows.ElementNotFoundError:
                 logger.debug("未找到对话框")
+                print('未找到对话框')
                 return {"message": "success"}
             # handler就是对话框，handle()方法是%Y关闭
+            print('title='+str(title))#撤单确认
             result = handler.handle(title)
+            print('result='+str(result))
+            #result is None even Cancel is OK why??? see PopDialogHandler#handle
             if result:
                 return result
         logger.debug("未出现任何对话框，只好返回")

@@ -106,20 +106,32 @@ class Copy(BaseStrategy):
                 # logger.debug("验证码对话框弹出，需要OCR识别")
 
                 file_path = tempfile.mktemp()+".png"
+                file_path2 = tempfile.mktemp()+"2.png"
+                #print('tempfile is: '+ file_path)
 
                 count = 5
                 found = False
                 while count > 0:
+
+                    control = self._trader.app.top_window().window(
+                        control_id=0x965, class_name="Static"
+                    )
+
+                    rect = control.element_info.rectangle
+                    rect.right = round(
+                        rect.right + (rect.right - rect.left) * 0.3
+                    )  # 扩展验证码控件截图范围为5个字符
+                
                     self._trader.app.top_window().window(
                         control_id=0x965, class_name="Static"
-                    ).capture_as_image().save(
+                    ).capture_as_image(rect).save(
                         file_path
-                    )  # 保存验证码
+                    )  # 保存验证码                   
 
                     captcha_num = captcha_recognize(file_path).strip()  # 识别验证码
                     captcha_num = "".join(captcha_num.split())
-                    # logger.info("验证码识别结果：%s" , captcha_num)
-                    if len(captcha_num) == 4:
+                    #logger.info("验证码识别结果：%s" , captcha_num)
+                    if len(captcha_num) == 5:
                         # self._trader.app.top_window().window(
                         #     control_id=0x964, class_name="Edit"
                         # ).set_text(

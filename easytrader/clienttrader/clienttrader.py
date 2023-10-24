@@ -60,7 +60,7 @@ class IClientTrader(abc.ABC):
 
 
 class ClientTrader(IClientTrader):
-    _editor_need_type_keys = True #default is False
+    _editor_need_type_keys = False
     # The strategy to use for getting grid data
     grid_strategy: Union[IGridStrategy, Type[IGridStrategy]] = grid_strategies.Copy
     _grid_strategy_instance: IGridStrategy = None
@@ -140,6 +140,23 @@ class ClientTrader(IClientTrader):
                 ).window_text()
             )
         return result
+
+    # 通过下单窗口获取股票即时价格
+    def get_stock_realtime_price(self, security):
+        self._switch_left_menus(["买入[F1]"])
+
+        code = security[-6:]
+
+        self._type_edit_control_keys(self._config.TRADE_SECURITY_CONTROL_ID, code)
+
+        # wait security input finish
+        self.wait(0.5)
+
+        stock_price = self._main.child_window(
+            control_id=self._config.TRADE_PRICE_CONTROL_ID, class_name="Edit"
+        ).texts()
+        print('stock price is:' + str(stock_price[1]))  # ['', '14.97']
+        return stock_price[1]
 
     @property
     def position(self):
@@ -553,7 +570,7 @@ class ClientTrader(IClientTrader):
             item.collapse()
 
     @perf_clock
-    def _switch_left_menus(self, path, sleep=0.2):
+    def _switch_left_menus(self, path, sleep=0.5):
         self.close_pop_dialog()
         self._get_left_menus_handle().get_item(path).select()
         self._app.top_window().type_keys('{F5}')
@@ -583,19 +600,19 @@ class ClientTrader(IClientTrader):
             count = count - 1
 
     def _cancel_entrust_by_double_click(self, row):
-        x = self._config.CANCEL_ENTRUST_GRID_LEFT_MARGIN #50
+        x = self._config.CANCEL_ENTRUST_GRID_LEFT_MARGIN # 50
         y = (
-            self._config.CANCEL_ENTRUST_GRID_FIRST_ROW_HEIGHT #30
-            + self._config.CANCEL_ENTRUST_GRID_ROW_HEIGHT * row #16 x i
+            self._config.CANCEL_ENTRUST_GRID_FIRST_ROW_HEIGHT # 30
+            + self._config.CANCEL_ENTRUST_GRID_ROW_HEIGHT * row # 16 x i
         )
-        print('x='+str(x) + ',y='+str(y))#(50,30) when i=0
-        x = 100 #x=50貌似不够哦，需要100
+        print('x='+str(x) + ',y='+str(y))  # (50,30) when i=0
+        x = 100  # x=50貌似不够哦，需要100
         
         # 双击取消订单（软件上双击或回车可撤单）
         click_rtn = self._app.top_window().child_window(
             control_id=self._config.COMMON_GRID_CONTROL_ID,
             class_name="CVirtualGridCtrl",
-        ).double_click(coords=(x, y)) #<--- x=50貌似不够哦，需要100
+        ).double_click(coords=(x, y))  # <--- x=50貌似不够哦，需要100
         print('click_rtn='+str(click_rtn))
         logger.debug("双击第%d行，用于撤单",row)
 
@@ -611,16 +628,16 @@ class ClientTrader(IClientTrader):
             try:
                 title = self._get_pop_dialog_title()
                 logger.debug("获得对话框标题：%s",title)
-                print("获得对话框标题："+str(title))#撤单确认
+                print("获得对话框标题："+str(title))  # 撤单确认
             except pywinauto.findwindows.ElementNotFoundError:
                 logger.debug("未找到对话框")
                 print('未找到对话框')
                 return {"message": "success"}
             # handler就是对话框，handle()方法是%Y关闭
-            print('title='+str(title))#撤单确认
+            print('title='+str(title))  # 撤单确认
             result = handler.handle(title)
             print('result='+str(result))
-            #result is None even Cancel is OK why??? see PopDialogHandler#handle
+            # result is None even Cancel is OK why??? see PopDialogHandler#handle
             if result:
                 return result
         logger.debug("未出现任何对话框，只好返回")

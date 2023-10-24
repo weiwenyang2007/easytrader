@@ -35,7 +35,7 @@ class PopDialogHandler:
             self._submit_by_shortcut()
             logger.debug("使用快捷键%Y提交标题为[%s]的对话框", title)
             print('return None from PopDialogHandler handle')
-            #try below wa:
+            # try below wa:
             if "撤单确认" == title:
                 return {"message": "撤单确认 成功"}
                 

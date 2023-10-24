@@ -106,8 +106,7 @@ class Copy(BaseStrategy):
                 # logger.debug("验证码对话框弹出，需要OCR识别")
 
                 file_path = tempfile.mktemp()+".png"
-                file_path2 = tempfile.mktemp()+"2.png"
-                #print('tempfile is: '+ file_path)
+                # print('tempfile is: '+ file_path)
 
                 count = 5
                 found = False

@@ -23,6 +23,7 @@ def sanity_check():
 
         balance_data = {}
         #资金
+        log.debug('get user.balance')
         balance = user.balance
         log.debug('当前资金:' + str(balance))
 
@@ -35,6 +36,7 @@ def sanity_check():
         balance_data['money'] = money
 
         #当前持仓
+        log.debug('get user.position')
         position = user.position
         log.debug('当前持仓:' + str(position))
 
@@ -57,6 +59,7 @@ def sanity_check():
         balance_data['stock_holds'] = stock_holds
 
         #当日成交
+        log.debug('get user.today_trades')
         today_trades = user.today_trades
         log.debug('当日成交:' + str(today_trades))
 
@@ -87,6 +90,7 @@ def sanity_check():
 
 
         #当日委托
+        log.debug('get user.today_entrusts')
         today_entrusts = user.today_entrusts
         log.debug('当日委托:' + str(today_entrusts))
         #操作：买入，卖出
@@ -264,5 +268,5 @@ def deal_with_easy_trade(balance_data):
         
 
 if __name__ == "__main__":
-    #sanity_check()
-    deal_with_easy_trade(json.load(open("D:/github/easytrader/data/balance.json", "r")))
+    sanity_check()
+    #deal_with_easy_trade(json.load(open("D:/github/easytrader/data/balance.json", "r")))

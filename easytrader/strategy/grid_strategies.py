@@ -84,6 +84,8 @@ class Copy(BaseStrategy):
 
         # 从剪贴板获得相应信息
         content = self._get_clipboard_data()
+        #print('clip data is ' + str(content))
+        pywinauto.clipboard.EmptyClipboard()
         return self._format_grid_data(content)
 
     def _format_grid_data(self, data: str) -> List[Dict]:
@@ -100,18 +102,19 @@ class Copy(BaseStrategy):
 
     def _get_clipboard_data(self) -> str:
         if Copy._need_captcha_reg:
-            if (
-                    self._trader.app.top_window().window(class_name="Static", title_re="验证码").exists(timeout=1)
-            ):
+                #print('_need_captcha_reg')
+                dlg = self._trader.app.top_window().window(class_name="Static", title_re="验证码")
+                dlg.wait_not('visible', timeout=1)
+            #if self._trader.app.top_window().window(class_name="Static", title_re="验证码").exists(timeout=1):
                 # logger.debug("验证码对话框弹出，需要OCR识别")
-
+                #print('need OCR')
                 file_path = tempfile.mktemp()+".png"
                 # print('tempfile is: '+ file_path)
 
                 count = 5
                 found = False
                 while count > 0:
-
+                    #print('count='+str(count))
                     control = self._trader.app.top_window().window(
                         control_id=0x965, class_name="Static"
                     )
@@ -130,6 +133,7 @@ class Copy(BaseStrategy):
                     captcha_num = captcha_recognize(file_path).strip()  # 识别验证码
                     captcha_num = "".join(captcha_num.split())
                     #logger.info("验证码识别结果：%s" , captcha_num)
+                    #print('captcha_num='+str(captcha_num))
                     if len(captcha_num) == 5:
                         # self._trader.app.top_window().window(
                         #     control_id=0x964, class_name="Edit"
@@ -144,7 +148,8 @@ class Copy(BaseStrategy):
                         self._trader.app.top_window().set_focus()
                         pywinauto.keyboard.SendKeys("{ENTER}")  # 模拟发送enter，点击确定
                         try:
-                            self._trader.wait(0.5)
+                            #print('wait 1')
+                            self._trader.wait(1)
                             # 下面的"验证码错误！"label，如果不存在（会触发异常），说明识别通过了
                             logger.info(
                                 self._trader.app.top_window()
@@ -154,21 +159,28 @@ class Copy(BaseStrategy):
                         except Exception as ex:  # 窗体消失
                             found = True
                             # logger.info("识别完成")
+                            print('识别完成')
                             break
                     count -= 1
-                    self._trader.wait(0.1)
+                    #print('wait 1 2')
+                    self._trader.wait(1)
                     self._trader.app.top_window().window(
                         control_id=0x965, class_name="Static"
                     ).click()
                 if not found:
+                    #print('not found')
                     self._trader.app.top_window().Button2.click()  # 点击取消
-        count = 5
+            #else:
+            #    print('Error No pop up windows is detect?')
+        count = 1  # 5
         while count > 0:
             try:
+                #print('GetData')
                 return pywinauto.clipboard.GetData()
             # pylint: disable=broad-except
             except Exception as e:
                 count -= 1
+                #print('retry')
                 logger.exception("%s, retry ......", e)
 
 

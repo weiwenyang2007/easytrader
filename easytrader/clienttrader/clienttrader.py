@@ -162,18 +162,21 @@ class ClientTrader(IClientTrader):
 
     @property
     def position(self):
+        self.refresh()
         self._switch_left_menus(["查询[F4]", "资金股票"])
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
 
     @property
     def today_entrusts(self):
+        self.refresh()
         self._switch_left_menus(["查询[F4]", "当日委托"])
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
 
     @property
     def today_trades(self):
+        self.refresh()
         self._switch_left_menus(["查询[F4]", "当日成交"])
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
@@ -241,12 +244,14 @@ class ClientTrader(IClientTrader):
 
     @perf_clock
     def buy(self, security, price, amount, **kwargs):
+        self.refresh()
         self._switch_left_menus(["买入[F1]"])
 
         return self.trade(security, price, amount)
 
     @perf_clock
     def sell(self, security, price, amount, **kwargs):
+        self.refresh()
         self._switch_left_menus(["卖出[F2]"])
 
         return self.trade(security, price, amount)

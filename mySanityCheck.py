@@ -249,6 +249,7 @@ def deal_with_easy_trade(balance_data):
             
         current_time = datetime.now().strftime("%H:%M:%S")
         if current_time >= '09:30:00' and current_time < '15:00:00':
+            log.debug('within trade time, check buy and sell operation')
             target_stocks_f = open("D:/github/easytrader/data/target_stocks.json", "r")
             target_stocks = json.load(target_stocks_f)
             for target_stock in target_stocks:
@@ -257,12 +258,16 @@ def deal_with_easy_trade(balance_data):
                     log.debug('buy_item is ' + str(buy_item))
                     entrust_no = user.sell(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])        
                     log.debug('buy result: ' + str(entrust_no))
+                else:
+                    log.debug('no buy for ' + str(target_stock['stock_id']))
                     
                 sell_item = check_sell_condition(balance_data, target_stock)
                 if sell_item:
                     log.debug('sell_item is ' + str(sell_item))   
                     entrust_no = user.sell(sell_item['stock_id'], price=sell_item['sell_price'], amount=sell_item['sell_number'])        
                     log.debug('sell result: ' + str(entrust_no))
+                else:
+                    log.debug('no sell for ' + str(target_stock['stock_id']))    
         else:
             log.debug('Time is out of trade time, no buy or sell operation')        
         

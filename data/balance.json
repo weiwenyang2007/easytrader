@@ -1,0 +1,28 @@
+{
+  "money": {
+    "balance_remain": 12498.8,
+    "balance_stockHold": 2506.0,
+    "balance_total": 15004.8,
+    "balance_usable": 12498.8
+  },
+  "stock_holds": [
+    {
+      "balance": 2506.0,
+      "freeze_number": 0,
+      "hold_number": 100,
+      "stock_id": "600547",
+      "trade_price": 25.06,
+      "usable_number": 0
+    }
+  ],
+  "stock_today_entrusts": [
+    {
+      "contract_id": "1846",
+      "number": 100,
+      "operation": "Sell",
+      "price": 25.56,
+      "stock_id": "600547"
+    }
+  ],
+  "stock_today_trades": []
+}

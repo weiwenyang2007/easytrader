@@ -125,6 +125,7 @@ class ClientTrader(IClientTrader):
     @property
     def balance(self):
         self._switch_left_menus(["查询[F4]", "资金股票"])
+        #self._switch_left_menus_by_shortcut("{F4}") # not work
 
         return self._get_balance_from_statics()
 
@@ -155,7 +156,8 @@ class ClientTrader(IClientTrader):
         stock_price = self._main.child_window(
             control_id=self._config.TRADE_PRICE_CONTROL_ID, class_name="Edit"
         ).texts()
-        print('stock price is:' + str(stock_price[1]))  # ['', '14.97']
+        #print('stock price is:' + str(stock_price[1]))  
+        # ['', '14.97']
         return stock_price[1]
 
     @property

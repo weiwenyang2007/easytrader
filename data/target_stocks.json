@@ -1,0 +1,8 @@
+[
+  {
+    "stock_id": "600547",
+	"max_hold_number": 300,
+	"base_buy_number": 100,
+	"base_sell_number": 100
+  }
+]

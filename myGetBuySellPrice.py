@@ -86,7 +86,7 @@ def get_last_price_from_history_trads(stock_id, buyOrSell):
     try:
         log.debug('get_last ' + buyOrSell + ' price_from_history_trads Start')        
         
-        his_trade_file = open("D:/github/easytrader/data/history_trade.json", "r")
+        his_trade_file = open("Z:/easytrader/data/history_trade.json", "r")
         his_trade_data = json.load(his_trade_file)
         log.debug('his_trade_data for ' + stock_id + ' is ' + str(his_trade_data))
         

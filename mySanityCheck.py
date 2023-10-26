@@ -17,7 +17,7 @@ def sanity_check():
         log.info('Sanity start')
 
         today = datetime.today().strftime('%Y-%m-%d')
-        history_trade = open("D:/github/easytrader/data/history_trade.json", "r")
+        history_trade = open("Z:/easytrader/data/history_trade.json", "r")
         history_trade_balance_data = json.load(history_trade)
         history_trade.close()
 
@@ -127,12 +127,12 @@ def sanity_check():
         
         # Sanity Check is OK for this time, update the json file.
         #save to balance_data file
-        with open("D:/github/easytrader/data/balance.json", "w") as write_file:
+        with open("Z:/easytrader/data/balance.json", "w") as write_file:
             json.dump(balance_data, write_file, indent=2, sort_keys=True)
           
         #TODO:filter the history_trade_balance_data, only keep the latest buy and sell
         #append today trade to history file
-        with open("D:/github/easytrader/data/history_trade.json", "w") as write_file:
+        with open("Z:/easytrader/data/history_trade.json", "w") as write_file:
             json.dump(history_trade_balance_data, write_file, indent=2, sort_keys=True)    
             
         log.info('Sanity success and end')    
@@ -250,7 +250,7 @@ def deal_with_easy_trade(balance_data):
         current_time = datetime.now().strftime("%H:%M:%S")
         if current_time >= '09:30:00' and current_time < '15:00:00':
             log.debug('within trade time, check buy and sell operation')
-            target_stocks_f = open("D:/github/easytrader/data/target_stocks.json", "r")
+            target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
             target_stocks = json.load(target_stocks_f)
             for target_stock in target_stocks:
                 buy_item = check_buy_condition(balance_data, target_stock)
@@ -279,4 +279,4 @@ def deal_with_easy_trade(balance_data):
 
 if __name__ == "__main__":
     sanity_check()
-    #deal_with_easy_trade(json.load(open("D:/github/easytrader/data/balance.json", "r")))
+    #deal_with_easy_trade(json.load(open("Z:/easytrader/data/balance.json", "r")))

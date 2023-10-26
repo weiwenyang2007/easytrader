@@ -159,7 +159,7 @@ class Copy(BaseStrategy):
                         except Exception as ex:  # 窗体消失
                             found = True
                             # logger.info("识别完成")
-                            print('识别完成')
+                            #print('识别完成')
                             break
                     count -= 1
                     #print('wait 1 2')

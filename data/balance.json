@@ -15,14 +15,6 @@
       "usable_number": 100
     }
   ],
-  "stock_today_entrusts": [
-    {
-      "contract_id": "1846",
-      "number": 100,
-      "operation": "Sell",
-      "price": 25.56,
-      "stock_id": "600547"
-    }
-  ],
+  "stock_today_entrusts": [],
   "stock_today_trades": []
 }

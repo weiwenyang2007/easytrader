@@ -1,8 +1,11 @@
 from datetime import datetime
+from operator import itemgetter
+
 import json
 import easytrader
 import myLog as myLogger
 import myGetBuySellPrice
+
 log = myLogger.setup_custom_logger(__name__)
 
 from pytesseract import pytesseract
@@ -101,14 +104,14 @@ def sanity_check():
         money_occupy = 0.0
         for item in today_entrusts:
             # 过滤没有撤销和成交的委托订单
-            if item['成交数量'] == 0 and (item['备注'] == '未报' or item['备注'] == '已报' or item['备注'] == '已报待撤'):
-                stock = {}        
+            if item['成交数量'] == 0 and item['备注'] in ['未报', '已报', '未报待撤', '已报待撤']:
+                stock = {}
                 stock['stock_id'] = item['证券代码']
                 stock['number'] = item['委托数量']
                 stock['price'] = item['委托价格']
                 stock['contract_id'] = item['合同编号']
                 stock['operation'] = 'Buy' if item['操作']=="买入" else 'Sell' if item['操作']=="卖出" else item['操作']
-                
+
                 if stock['operation'] == 'Buy':
                     money_occupy += (int(stock['number']) * float(stock['price']))
                 log.debug('Entrust money_occupy: '+str(money_occupy))
@@ -129,17 +132,58 @@ def sanity_check():
         #save to balance_data file
         with open("Z:/easytrader/data/balance.json", "w") as write_file:
             json.dump(balance_data, write_file, indent=2, sort_keys=True)
-          
-        #TODO:filter the history_trade_balance_data, only keep the latest buy and sell
-        #append today trade to history file
-        with open("Z:/easytrader/data/history_trade.json", "w") as write_file:
-            json.dump(history_trade_balance_data, write_file, indent=2, sort_keys=True)    
+
+        after_filter = filter_history_trade_data(balance_data, history_trade_balance_data)
+        if after_filter:
+            with open("Z:/easytrader/data/history_trade.json", "w") as write_file:
+                json.dump(after_filter, write_file, indent=2, sort_keys=True)
             
         log.info('Sanity success and end')    
         return balance_data
     except Exception as ex:
         log.exception(ex)
         log.error('Sanity end with exception')
+        return None
+
+
+def filter_history_trade_data(balance_data, history_trade_balance_data):
+    try:
+        # filter and sort the history_trade_balance_data
+        # 只保留当前仓位数量对应的条数
+        rtn = []
+        # Only keep the latest 3 history trade records (3 = max_hold_number/base_buy_number in target_stocks.json)
+        max_keep_record_number = 3
+        for balance_item in balance_data['stock_holds']:
+            # To handle Buy:
+            # filter condition: operation==Buy and stock_id is balance_item['stock_id']
+            history_trade_balance_buy_data = list(filter(lambda item: ('Buy' in item['operation'] and balance_item['stock_id'] == item['stock_id']), history_trade_balance_data))
+            if len(history_trade_balance_buy_data) <= max_keep_record_number:
+                log.debug('Keep the current history trade buy record')
+            else:
+                log.debug('Filter out the oldest history trade buy record')
+                history_trade_balance_buy_data.sort(key=itemgetter('datetime'), reverse=True)
+                history_trade_balance_buy_data = history_trade_balance_buy_data[:max_keep_record_number]
+
+            rtn.extend(history_trade_balance_buy_data)
+
+            # To handle Sell:
+            # filter condition: operation==Sell and stock_id is balance_item['stock_id']
+            history_trade_balance_sell_data = list(filter(lambda item: ('Sell' in item['operation'] and balance_item['stock_id'] == item['stock_id']), history_trade_balance_data))
+
+            if len(history_trade_balance_sell_data) <= max_keep_record_number:
+                log.debug('Keep the current history trade sell record')
+            else:
+                log.debug('Filter out the oldest history trade sell record')
+                history_trade_balance_sell_data.sort(key=itemgetter('datetime'), reverse=True)
+                history_trade_balance_sell_data = history_trade_balance_sell_data[:max_keep_record_number]
+
+            rtn.extend(history_trade_balance_sell_data)
+
+        log.debug("after_filter_history_trade_balance_data is: %s", str(rtn))
+        return rtn
+    except Exception as ex:
+        log.exception(ex)
+        log.error('filter_history_trade_data end with exception')
         return None
 
 
@@ -182,7 +226,7 @@ def check_buy_condition(balance_data, target_stock):
             return buy_items
             
         #     
-        log.debug('Can not buy more sotck ' + stock_id)
+        log.debug('Can not buy more stock for ' + target_stock['stock_id'])
         return None    
     except Exception as ex:
         log.exception(ex)
@@ -280,3 +324,4 @@ def deal_with_easy_trade(balance_data):
 if __name__ == "__main__":
     sanity_check()
     #deal_with_easy_trade(json.load(open("Z:/easytrader/data/balance.json", "r")))
+    #filter_history_trade_data(json.load(open("Z:/easytrader/data/balance.json")), json.load(open("Z:/easytrader/data/history_trade_test_input1.json")))

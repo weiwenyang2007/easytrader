@@ -101,13 +101,13 @@ def sanity_check():
         money_occupy = 0.0
         for item in today_entrusts:
             # 过滤没有撤销和成交的委托订单
-            if item['成交数量'] == 0 and (item['备注'] == '未报' or item['备注'] == '已报'):
+            if item['成交数量'] == 0 and (item['备注'] == '未报' or item['备注'] == '已报' or item['备注'] == '已报待撤'):
                 stock = {}        
                 stock['stock_id'] = item['证券代码']
                 stock['number'] = item['委托数量']
                 stock['price'] = item['委托价格']
                 stock['contract_id'] = item['合同编号']
-                stock['operation'] = 'Buy' if item['操作']=="买入" else 'Sell' if item['操作']=="卖出" else 'Unknown'
+                stock['operation'] = 'Buy' if item['操作']=="买入" else 'Sell' if item['操作']=="卖出" else item['操作']
                 
                 if stock['operation'] == 'Buy':
                     money_occupy += (int(stock['number']) * float(stock['price']))

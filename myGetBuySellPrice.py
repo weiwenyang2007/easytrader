@@ -73,6 +73,11 @@ def get_realtime_price_from_sina(stock_id):
         resp = response.read().decode()
         log.debug('realtime price for ' + stock_id + ' is ' + resp)
         #var minute_data_list = [['15:00:00', '24.89', '215872']];
+        arrs = resp.split(',')
+        if len(arrs) == 3:
+            price = arrs[1].strip()
+            log.debug('realtime price for ' + stock_id + ' is ' + price)
+            return float(price)
         
         return None
         
@@ -89,14 +94,21 @@ def get_last_price_from_history_trads(stock_id, buyOrSell):
         his_trade_file = open("Z:/easytrader/data/history_trade.json", "r")
         his_trade_data = json.load(his_trade_file)
         log.debug('his_trade_data for ' + stock_id + ' is ' + str(his_trade_data))
-        
+        # for buy/sell price, we count the average price of the history trade
+        total_price = 0.0
+        total_count = 0
         for item in his_trade_data:
             if item['stock_id'] == stock_id:
                 if item['operation'] == 'Buy' and buyOrSell == 'Buy':
-                    return float(item['price'])
+                    total_price += float(item['price'])
+                    total_count += 1
                 elif item['operation'] == 'Sell' and buyOrSell == 'Sell':
-                    return float(item['price'])                           
-        
+                    total_price += float(item['price'])
+                    total_count += 1
+
+        if total_count > 0:
+            return total_price/total_count
+
         log.debug('Can not get_last_' + buyOrSell + '_price_from_history_trads')
         
         return None
@@ -156,5 +168,4 @@ def get_indocator_from_easystogu(stock_id, buyOrSell):
         
 
 if __name__ == "__main__":
-    price = get_suggested_sell_price('600547')
-    print('Result is ' + str(price))
+    get_realtime_price_from_sina('600547')

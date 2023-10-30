@@ -6,15 +6,12 @@ log = myLogger.setup_custom_logger(__name__)
 
 
 def get_suggested_buy_price(stock_id):
-    log.debug("get_suggested_buy_price {}", stock_id)
-    #TODO: additional check price is within price+-10% or 20%
+    log.debug("get_suggested_buy_price {}".format(stock_id))
 
     # first get last Sell trade price from history trades
     # 高抛低吸做T:建议买入价格比上次卖出价格低0.022
-    last_avg_sell_price = get_last_price_from_history_trads(stock_id, 'Sell')
-    if last_avg_sell_price and last_avg_sell_price > 0.0:
-        log.debug('use last_avg_sell_price %f', last_avg_sell_price)
-        return last_avg_sell_price * 0.978
+    last_avg_sell_price = get_last_price_from_history_trades(stock_id, 'Sell')
+    log.debug('last_avg_sell_price {}'.format(last_avg_sell_price))
     
     #Has risk to based on realtime
     #price = get_realtime_price_from_sina(stock_id)
@@ -22,24 +19,28 @@ def get_suggested_buy_price(stock_id):
     #    return price * 0.978 
         
     # else get suggest buy price from shenXian Indicator (hc6 value)
-    shenxian_buy_price = get_indocator_from_easystogu(stock_id, 'Buy')
-    if shenxian_buy_price and shenxian_buy_price > 0.0:
-        log.debug('use shenxian_buy_price %f', shenxian_buy_price)
+    shenxian_buy_price = get_indicator_from_easystogu(stock_id, 'Buy')
+    log.debug('shenxian_buy_price {}'.format(shenxian_buy_price))
+
+    if last_avg_sell_price > 0.0 and shenxian_buy_price > 0.0:
+        return max(last_avg_sell_price * 0.978, shenxian_buy_price)
+    elif last_avg_sell_price > 0.0:
+        return last_avg_sell_price * 0.978
+    elif shenxian_buy_price > 0.0:
         return shenxian_buy_price
                
     log.debug('Can not get_suggested_buy_price for ' + stock_id)
     
     return None     
 
+
 def get_suggested_sell_price(stock_id):
-    log.debug("get_suggested_sell_price {}", stock_id)
+    log.debug("get_suggested_sell_price {}".format(stock_id))
     # first get last Buy trade price from history trades
     # 高抛低吸做T:建议卖出价格比上次买入价格高0.022
     # 优先选择上次买入价格，做T
-    last_avg_buy_price = get_last_price_from_history_trads(stock_id, 'Buy')
-    if last_avg_buy_price and last_avg_buy_price > 0.0:
-        log.debug('use last_avg_buy_price %f', last_avg_buy_price)
-        return last_avg_buy_price * 1.022
+    last_avg_buy_price = get_last_price_from_history_trades(stock_id, 'Buy')
+    log.debug('last_avg_buy_price {}'.format(last_avg_buy_price))
 
     # realtime_price = get_realtime_price_from_sina(stock_id)
     #if realtime_price:
@@ -47,11 +48,17 @@ def get_suggested_sell_price(stock_id):
     
     # else get suggest buy price from shenXian Indicator (hc6 value)
     # 其次选择shenxian卖指标，这个值比上面那个要高或者低都有可能
-    shenxian_sell_price = get_indocator_from_easystogu(stock_id, 'Sell')
-    if shenxian_sell_price and shenxian_sell_price > 0.0:
-        log.debug('use shenxian_sell_price %f', shenxian_sell_price)
+    shenxian_sell_price = get_indicator_from_easystogu(stock_id, 'Sell')
+    log.debug('shenxian_sell_price {}'.format(shenxian_sell_price))
+
+    # select the min price
+    if last_avg_buy_price > 0.0 and shenxian_sell_price > 0.0:
+        return min(last_avg_buy_price * 1.022, shenxian_sell_price)
+    elif last_avg_buy_price > 0.0:
+        return last_avg_buy_price * 1.022
+    elif shenxian_sell_price > 0.0:
         return shenxian_sell_price
-               
+
     log.debug('Can not get_suggested_sell_price for ' + stock_id)
     
     return None     
@@ -81,21 +88,21 @@ def get_realtime_price_from_sina(stock_id):
             return float(price.replace("'", ""))
 
         log.warn('Can not get real time price for ' + stock_id)
-        return None
+        return 0.0
         
     except Exception as ex:
         log.exception(ex)
         log.error('get_realtime_price_from_sina End with exception')
-        return None      
+        return 0.0
 
 
-def get_last_price_from_history_trads(stock_id, buyOrSell):
+def get_last_price_from_history_trades(stock_id, buyOrSell):
     try:
         log.debug('get_last_price_from_history_trads: {} {}'.format(stock_id, buyOrSell))
         
         his_trade_file = open("Z:/easytrader/data/history_trade.json", "r")
         his_trade_data = json.load(his_trade_file)
-        log.debug('his_trade_data for ' + stock_id + ' is ' + str(his_trade_data))
+        #log.debug('his_trade_data for ' + stock_id + ' is ' + str(his_trade_data))
         # for buy/sell price, we count the average price of the history trade
         total_price = 0.0
         total_count = 0
@@ -113,16 +120,17 @@ def get_last_price_from_history_trads(stock_id, buyOrSell):
 
         log.debug('Can not get_last_price_from_history_trads: {} {}'.format(stock_id, buyOrSell))
         
-        return None
+        return 0.0
         
     except Exception as ex:
         log.exception(ex)
         log.error('get_last ' + buyOrSell + ' price_from_history_trads End with exception')
-        return None    
+        return 0.0
 
-def get_indocator_from_easystogu(stock_id, buyOrSell):
+
+def get_indicator_from_easystogu(stock_id, buyOrSell):
     try:
-        log.debug('get ' + buyOrSell + ' indocator_from_easystogu Start')       
+        log.debug('get_indicator_from_easystogu {} {}'.format(stock_id, buyOrSell))
         
         conn = http.client.HTTPConnection('192.168.10.200:8080')
 
@@ -143,7 +151,6 @@ def get_indocator_from_easystogu(stock_id, buyOrSell):
 
             if 'B' in respJson['sellFlagsTitle']:
                 log.debug(stock_id + ' Buy@'+str(respJson['hc6']))
-                #TODO: to check if respJson['updatedTime'] is outof dated
                 return float(respJson['hc6'])
         else:
             # Sell
@@ -155,19 +162,19 @@ def get_indocator_from_easystogu(stock_id, buyOrSell):
 
             if 'S' in respJson['sellFlagsTitle']:
                 log.debug(stock_id + ' Sell@'+str(respJson['hc5']))
-                #TODO: to check if respJson['updatedTime'] is outof dated
                 return float(respJson['hc5'])
                 
         #        
-        log.debug('Can not get ' + buyOrSell + ' indocator_from_easystogu')
+        log.debug('Can not get_indicator_from_easystogu {} {}'.format(stock_id, buyOrSell))
         
-        return None
+        return 0.0
         
     except Exception as ex:
         log.exception(ex)
-        log.error('get_' + buyOrSell + '_indocator_from_easystogu End with exception')
-        return None
+        log.debug('get_indicator_from_easystogu {} {} with exception.'.format(stock_id, buyOrSell))
+        return 0.0
         
 
 if __name__ == "__main__":
-    get_realtime_price_from_sina('600547')
+    rtn = get_suggested_buy_price('600547')
+    print('rtn='+str(rtn))

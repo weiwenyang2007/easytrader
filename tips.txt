@@ -6,15 +6,26 @@
      which _conda.exe
 	 /c/ProgramData/anaconda3/_conda.exe
 	 
+	 Using conda to create python 3.6 env:
      _conda.exe create -n easytrader-piginzoo python=3.6
 	 
 	 In Anaconda GUI, open terminal to easytrader-piginzoo
 	 cd C:\myFolder\github\easytrader-piginzoo
 	 Comment out #markupsafe==1.0 in requirements.txt
+	 
+	 Or do not use conda, install python3.6 in Windows 7:
 	 pip install -r requirements.txt
 	 pip install pypiwin32
 	 
      同花顺软件版本: 同花顺_THS_freeldy_9.20.50_0916.exe
 	 tesseract-ocr-w64-setup-v4.1.0.20190314.exe	 
 	 
- 2.  myTest.py
+ 2.  Windows 7 path: 
+     C:\Users\Administrator\AppData\Local\Programs\Python\Python36\;
+	 C:\Users\Administrator\AppData\Local\Programs\Python\Python36\Scripts;
+	 C:\Program Files\Tesseract-OCR;
+
+3.   Windows 7 scheduler task config: 
+     Z:\easytrader\data\Windows7_Scheduler_Task.xml
+	 
+4.   One Win7 is running the easytrader project, another Win7 is remote control to it.	 

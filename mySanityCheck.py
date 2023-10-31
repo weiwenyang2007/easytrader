@@ -322,6 +322,6 @@ def deal_with_easy_trade(balance_data):
         
 
 if __name__ == "__main__":
-    sanity_check()
-    #deal_with_easy_trade(json.load(open("Z:/easytrader/data/balance.json", "r")))
+    #sanity_check()
+    deal_with_easy_trade(json.load(open("Z:/easytrader/data/balance.json", "r")))
     #filter_history_trade_data(json.load(open("Z:/easytrader/data/balance.json")), json.load(open("Z:/easytrader/data/history_trade_test_input1.json")))

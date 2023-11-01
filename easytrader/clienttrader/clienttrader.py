@@ -163,6 +163,7 @@ class ClientTrader(IClientTrader):
     @property
     def position(self):
         self.refresh()
+        self.wait(1)
         self._switch_left_menus(["查询[F4]", "资金股票"])
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
@@ -170,6 +171,7 @@ class ClientTrader(IClientTrader):
     @property
     def today_entrusts(self):
         self.refresh()
+        self.wait(1)
         self._switch_left_menus(["查询[F4]", "当日委托"])
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
@@ -177,6 +179,7 @@ class ClientTrader(IClientTrader):
     @property
     def today_trades(self):
         self.refresh()
+        self.wait(1)
         self._switch_left_menus(["查询[F4]", "当日成交"])
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
@@ -184,6 +187,7 @@ class ClientTrader(IClientTrader):
     @property
     def cancel_entrusts(self):
         self.refresh()
+        self.wait(1)
         self._switch_left_menus(["撤单[F3]"])
 
         items = self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
@@ -193,17 +197,18 @@ class ClientTrader(IClientTrader):
     @perf_clock
     def cancel_entrust(self, entrust_no):
         self.refresh()
-        print('entrust_no='+str(entrust_no))
+        self.wait(1)
+        #print('entrust_no='+str(entrust_no))
         # 遍历整个[撤单]列表中的合同编号entrust_no
         for i, entrust in enumerate(self.cancel_entrusts):
             # 如果找到匹配的合同编号
-            print('it='+str(entrust))
-            print('if='+str(entrust[self._config.CANCEL_ENTRUST_ENTRUST_FIELD]))
+            #print('it='+str(entrust))
+            #print('if='+str(entrust[self._config.CANCEL_ENTRUST_ENTRUST_FIELD]))
             if entrust[self._config.CANCEL_ENTRUST_ENTRUST_FIELD] == entrust_no:
                 logger.debug("查找到合同单号[%s]的委托单",entrust_no)
-                print('命中:' +str(i))
+                #print('命中:' +str(i))
                 double_click_rtn = self._cancel_entrust_by_double_click(i)
-                print('double_click_rtn='+str(double_click_rtn))
+                #print('double_click_rtn='+str(double_click_rtn))
                 return self._handle_pop_dialogs()
         return {"message": "委托单状态错误不能撤单, 该委托单可能已经成交或者已撤"}
 

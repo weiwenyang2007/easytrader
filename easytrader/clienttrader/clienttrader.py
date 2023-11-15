@@ -425,7 +425,7 @@ class ClientTrader(IClientTrader):
                 w = self._app.top_window()
                 if w is not None:
                     w.close()
-                    self.wait(0.2)
+                    self.wait(1)
         except (
                 findwindows.ElementNotFoundError,
                 timings.TimeoutError,

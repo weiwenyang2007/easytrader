@@ -102,19 +102,18 @@ class Copy(BaseStrategy):
 
     def _get_clipboard_data(self) -> str:
         if Copy._need_captcha_reg:
+            try:
                 #print('_need_captcha_reg')
                 dlg = self._trader.app.top_window().window(class_name="Static", title_re="验证码")
                 dlg.wait_not('visible', timeout=1)
             #if self._trader.app.top_window().window(class_name="Static", title_re="验证码").exists(timeout=1):
                 # logger.debug("验证码对话框弹出，需要OCR识别")
-                #print('need OCR')
                 file_path = tempfile.mktemp()+".png"
                 # print('tempfile is: '+ file_path)
 
                 count = 5
                 found = False
                 while count > 0:
-                    #print('count='+str(count))
                     control = self._trader.app.top_window().window(
                         control_id=0x965, class_name="Static"
                     )
@@ -148,7 +147,6 @@ class Copy(BaseStrategy):
                         self._trader.app.top_window().set_focus()
                         pywinauto.keyboard.SendKeys("{ENTER}")  # 模拟发送enter，点击确定
                         try:
-                            #print('wait 1')
                             self._trader.wait(1)
                             # 下面的"验证码错误！"label，如果不存在（会触发异常），说明识别通过了
                             logger.info(
@@ -162,26 +160,25 @@ class Copy(BaseStrategy):
                             #print('识别完成')
                             break
                     count -= 1
-                    #print('wait 1 2')
                     self._trader.wait(1)
                     self._trader.app.top_window().window(
                         control_id=0x965, class_name="Static"
                     ).click()
                 if not found:
-                    #print('not found')
                     self._trader.app.top_window().Button2.click()  # 点击取消
             #else:
             #    print('Error No pop up windows is detect?')
+            except Exception as e:
+                logger.warn('No pop up windows is detect for password, ignore ORC and exception')
+
         count = 1  # 5
         while count > 0:
             try:
-                #print('GetData')
                 return pywinauto.clipboard.GetData()
             # pylint: disable=broad-except
             except Exception as e:
                 count -= 1
-                #print('retry')
-                logger.exception("%s, retry ......", e)
+                logger.exception("%s, retry clipboard.GetData", e)
 
 
 class WMCopy(Copy):

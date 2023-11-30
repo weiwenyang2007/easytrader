@@ -9,7 +9,7 @@ import time
 from typing import Type, Union
 
 import easyutils
-from pywinauto import findwindows, timings
+from pywinauto import findwindows, timings, application
 
 from easytrader import pop_dialog_handler
 from easytrader.strategy import grid_strategies, refresh_strategies
@@ -57,6 +57,9 @@ class IClientTrader(abc.ABC):
     @abc.abstractmethod
     def is_exist_pop_dialog(self):
         pass
+        
+    def start(self, exe_path):
+        pass        
 
 
 class ClientTrader(IClientTrader):
@@ -100,6 +103,11 @@ class ClientTrader(IClientTrader):
     @property
     def config(self):
         return self._config
+        
+    def start(self, exe_path):
+        app = application.Application()
+        app.start(exe_path)        
+        self.wait(15)
 
     def connect(self, exe_path=None, **kwargs):
         """
